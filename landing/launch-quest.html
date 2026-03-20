@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 LAUNCH QUEST — AI-Маркетолог Поток 2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg2: #12121e;
+            --surface: #16162a;
+            --surface2: #1e1e36;
+            --border: #2a2a44;
+            --text: #f0f0f5;
+            --text2: #a0a0b8;
+            --text3: #6a6a82;
+            --purple: #8b5cf6;
+            --blue: #3b82f6;
+            --green: #22c55e;
+            --amber: #f59e0b;
+            --pink: #ec4899;
+            --red: #ef4444;
+            --cyan: #06b6d4;
+            --font: 'Inter', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        body::after { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); opacity: 0.3; pointer-events: none; z-index: -1; }
+
+        .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: rgba(10,10,15,0.97);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+        }
+        .top-inner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+        .level-badge {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 14px; border-radius: 100px;
+            background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(59,130,246,0.2));
+            border: 1px solid rgba(139,92,246,0.3);
+            font-size: 13px; font-weight: 700;
+        }
+        .level-badge .lvl { color: var(--amber); }
+        .xp-bar-wrap { flex: 1; min-width: 150px; }
+        .xp-bar-bg { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+        .xp-bar-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); border-radius: 4px; transition: width 0.5s ease; }
+        .xp-text { font-size: 11px; color: var(--text3); margin-top: 3px; text-align: right; }
+        .streak-badge {
+            display: flex; align-items: center; gap: 4px;
+            padding: 6px 12px; border-radius: 100px;
+            background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2);
+            font-size: 12px; font-weight: 600; color: var(--amber);
+        }
+        .top-stats {
+            display: flex; gap: 16px; font-size: 12px; color: var(--text3);
+        }
+        .top-stats strong { color: var(--text); }
+
+        /* ===== HERO ===== */
+        .hero {
+            text-align: center; padding: 48px 0 32px;
+            position: relative;
+        }
+        .hero::before {
+            content: ''; position: absolute;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(139,92,246,0.08), transparent 70%);
+            top: -200px; left: 50%; transform: translateX(-50%);
+            pointer-events: none;
+        }
+        .hero h1 { font-size: clamp(24px, 4vw, 36px); font-weight: 900; margin-bottom: 8px; letter-spacing: -0.02em; }
+        .hero h1 .emoji { font-size: 1.2em; }
+        .hero-sub { color: var(--text2); font-size: 15px; max-width: 500px; margin: 0 auto 24px; }
+
+        /* Progress ring */
+        .progress-ring-wrap { display: flex; justify-content: center; margin-bottom: 24px; }
+        .progress-ring { position: relative; width: 120px; height: 120px; }
+        .progress-ring svg { transform: rotate(-90deg); }
+        .progress-ring circle { fill: none; stroke-width: 8; }
+        .progress-ring .bg { stroke: var(--border); }
+        .progress-ring .fill { stroke: url(#grad); stroke-linecap: round; transition: stroke-dashoffset 0.8s ease; }
+        .progress-ring .center-text {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .progress-pct { font-size: 28px; font-weight: 900; line-height: 1; }
+        .progress-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; }
+
+        /* Phase tabs */
+        .phase-tabs {
+            display: flex; gap: 8px; justify-content: center;
+            margin-bottom: 32px; flex-wrap: wrap;
+        }
+        .phase-tab {
+            padding: 8px 16px; border-radius: 100px;
+            background: var(--surface); border: 1px solid var(--border);
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s ease; color: var(--text2);
+            display: flex; align-items: center; gap: 6px;
+        }
+        .phase-tab:hover { border-color: rgba(139,92,246,0.3); color: var(--text); }
+        .phase-tab.active { background: rgba(139,92,246,0.15); border-color: rgba(139,92,246,0.4); color: var(--purple); }
+        .phase-tab .tab-count {
+            background: rgba(255,255,255,0.08); padding: 2px 6px;
+            border-radius: 4px; font-size: 11px;
+        }
+
+        /* ===== QUEST CARDS ===== */
+        .quests { display: flex; flex-direction: column; gap: 8px; padding-bottom: 40px; }
+
+        .quest {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex; align-items: center; gap: 14px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .quest:hover { border-color: rgba(139,92,246,0.3); background: var(--surface2); transform: translateX(4px); }
+        .quest.done { opacity: 0.5; }
+        .quest.done .quest-title { text-decoration: line-through; }
+        .quest.done::after {
+            content: '✅'; position: absolute; right: 16px; top: 50%;
+            transform: translateY(-50%); font-size: 20px;
+        }
+
+        /* Glow when completing */
+        @keyframes questComplete {
+            0% { box-shadow: 0 0 0 rgba(34,197,94,0); }
+            50% { box-shadow: 0 0 30px rgba(34,197,94,0.3); border-color: var(--green); }
+            100% { box-shadow: 0 0 0 rgba(34,197,94,0); }
+        }
+        .quest.just-completed { animation: questComplete 1s ease; }
+
+        .quest-check {
+            width: 24px; height: 24px; flex-shrink: 0;
+            border: 2px solid var(--border); border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s ease; font-size: 14px;
+        }
+        .quest.done .quest-check { background: var(--green); border-color: var(--green); }
+        .quest:hover .quest-check { border-color: var(--purple); }
+
+        .quest-info { flex: 1; min-width: 0; }
+        .quest-title { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+        .quest-desc { font-size: 12px; color: var(--text3); line-height: 1.4; }
+
+        .quest-meta {
+            display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+        }
+        .quest-time {
+            padding: 3px 8px; border-radius: 4px;
+            font-size: 11px; font-weight: 600;
+            background: rgba(59,130,246,0.1); color: var(--blue);
+            border: 1px solid rgba(59,130,246,0.2);
+        }
+        .quest-xp {
+            padding: 3px 8px; border-radius: 4px;
+            font-size: 11px; font-weight: 700;
+            background: rgba(245,158,11,0.1); color: var(--amber);
+            border: 1px solid rgba(245,158,11,0.2);
+        }
+
+        /* Phase header */
+        .phase-header {
+            display: flex; align-items: center; gap: 12px;
+            padding: 24px 0 12px;
+        }
+        .phase-emoji { font-size: 28px; }
+        .phase-name { font-size: 18px; font-weight: 800; }
+        .phase-time {
+            margin-left: auto;
+            font-size: 12px; color: var(--text3); font-weight: 500;
+        }
+        .phase-progress {
+            height: 3px; background: var(--border); border-radius: 2px;
+            margin-bottom: 12px; overflow: hidden;
+        }
+        .phase-progress-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+
+        /* ===== REWARD POPUP ===== */
+        .reward-overlay {
+            position: fixed; inset: 0; z-index: 10000;
+            background: rgba(0,0,0,0.85);
+            display: none; align-items: center; justify-content: center;
+        }
+        .reward-overlay.show { display: flex; }
+        .reward-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 20px; padding: 40px;
+            text-align: center; max-width: 360px;
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes popIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .reward-emoji { font-size: 64px; margin-bottom: 16px; }
+        .reward-title { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+        .reward-desc { font-size: 14px; color: var(--text2); margin-bottom: 20px; line-height: 1.5; }
+        .reward-btn {
+            padding: 12px 28px; border-radius: 8px; border: none;
+            background: var(--green); color: #fff;
+            font-size: 15px; font-weight: 700; cursor: pointer;
+            font-family: var(--font);
+            transition: all 0.2s ease;
+        }
+        .reward-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+
+        /* ===== TIPS ===== */
+        .adhd-tips {
+            background: linear-gradient(135deg, rgba(236,72,153,0.08), rgba(139,92,246,0.08));
+            border: 1px solid rgba(236,72,153,0.2);
+            border-radius: 12px; padding: 20px 24px;
+            margin: 32px 0;
+        }
+        .adhd-tips-title { font-size: 14px; font-weight: 800; color: var(--pink); margin-bottom: 10px; }
+        .adhd-tips ul { list-style: none; }
+        .adhd-tips li {
+            font-size: 13px; color: var(--text2); line-height: 1.6;
+            padding: 4px 0; padding-left: 20px; position: relative;
+        }
+        .adhd-tips li::before { content: '⚡'; position: absolute; left: 0; }
+
+        /* ===== TIMER ===== */
+        .timer-float {
+            position: fixed; bottom: 24px; right: 24px; z-index: 200;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 16px 20px;
+            display: none; flex-direction: column; align-items: center; gap: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .timer-float.active { display: flex; }
+        .timer-task { font-size: 11px; color: var(--text3); max-width: 150px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .timer-display { font-size: 28px; font-weight: 900; font-variant-numeric: tabular-nums; }
+        .timer-btns { display: flex; gap: 8px; }
+        .timer-btn {
+            padding: 6px 14px; border-radius: 6px; border: none;
+            font-size: 12px; font-weight: 700; cursor: pointer; font-family: var(--font);
+        }
+        .timer-btn-start { background: var(--green); color: #fff; }
+        .timer-btn-stop { background: var(--red); color: #fff; }
+
+        /* ===== FOOTER SUMMARY ===== */
+        .footer-summary {
+            text-align: center; padding: 40px 0 60px;
+            border-top: 1px solid var(--border);
+        }
+        .fs-row { display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; margin-bottom: 24px; }
+        .fs-item { text-align: center; }
+        .fs-num { font-size: 24px; font-weight: 900; color: var(--purple); }
+        .fs-label { font-size: 11px; color: var(--text3); }
+        .fs-note { font-size: 13px; color: var(--text3); max-width: 500px; margin: 0 auto; line-height: 1.6; }
+        .fs-note strong { color: var(--text); }
+
+        /* Hidden phases */
+        .phase-group { display: none; }
+        .phase-group.visible { display: block; }
+    </style>
+</head>
+<body>
+
+<!-- SVG gradient def -->
+<svg width="0" height="0"><defs><linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#8b5cf6"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient></defs></svg>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+    <div class="container">
+        <div class="top-inner">
+            <div class="level-badge">🎮 Уровень <span class="lvl" id="level-num">1</span></div>
+            <div class="xp-bar-wrap">
+                <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-fill" style="width:0%"></div></div>
+                <div class="xp-text"><span id="xp-current">0</span> / <span id="xp-needed">100</span> XP</div>
+            </div>
+            <div class="streak-badge">🔥 <span id="streak-count">0</span> подряд</div>
+            <div class="top-stats">
+                <span>✅ <strong id="done-count">0</strong>/30</span>
+                <span>⏱ ~<strong id="time-left">12ч</strong></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="container">
+        <h1><span class="emoji">🚀</span> LAUNCH QUEST</h1>
+        <p class="hero-sub">30 мини-квестов по 15-45 мин. Каждый квест = конкретный результат. Кликай чтобы завершить. Собери все XP.</p>
+
+        <div class="progress-ring-wrap">
+            <div class="progress-ring">
+                <svg width="120" height="120">
+                    <circle class="bg" cx="60" cy="60" r="52"/>
+                    <circle class="fill" id="ring-fill" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+                </svg>
+                <div class="center-text">
+                    <span class="progress-pct" id="ring-pct">0%</span>
+                    <span class="progress-label">Запуск</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="phase-tabs" id="phase-tabs">
+            <div class="phase-tab active" data-phase="all">Все <span class="tab-count">30</span></div>
+            <div class="phase-tab" data-phase="1">🔧 Упаковка <span class="tab-count">10</span></div>
+            <div class="phase-tab" data-phase="2">📢 Контент <span class="tab-count">10</span></div>
+            <div class="phase-tab" data-phase="3">💰 Продажи <span class="tab-count">6</span></div>
+            <div class="phase-tab" data-phase="4">🚀 Запуск <span class="tab-count">4</span></div>
+        </div>
+    </div>
+</section>
+
+<!-- ADHD TIPS -->
+<div class="container">
+    <div class="adhd-tips">
+        <div class="adhd-tips-title">🧠 ПРАВИЛА ИГРЫ ДЛЯ СДВГ-МОЗГА</div>
+        <ul>
+            <li><strong>1 квест = 1 помидорка.</strong> Не думай о всём списке — только следующий квест</li>
+            <li><strong>Кликнул = получил XP.</strong> Дофамин придёт. Доверься процессу</li>
+            <li><strong>Застрял > 5 мин?</strong> Скажи Claude Code что делать. Он сделает за тебя</li>
+            <li><strong>3 квеста подряд = перерыв.</strong> Серьёзно. Встань. Попей воды. Серотонин тоже нужен</li>
+            <li><strong>Не по порядку = ОК.</strong> Делай что вкусно прямо сейчас. СДВГ любит новизну</li>
+            <li><strong>Claude Code — твой вайб-кодер.</strong> Тебе нужно только ГОВОРИТЬ что делать</li>
+        </ul>
+    </div>
+</div>
+
+<!-- QUESTS -->
+<div class="container">
+    <div id="quests-container"></div>
+</div>
+
+<!-- FOOTER -->
+<div class="container">
+    <div class="footer-summary">
+        <div class="fs-row">
+            <div class="fs-item"><div class="fs-num">30</div><div class="fs-label">квестов</div></div>
+            <div class="fs-item"><div class="fs-num">~12ч</div><div class="fs-label">суммарно</div></div>
+            <div class="fs-item"><div class="fs-num">3-4</div><div class="fs-label">дня по 3ч</div></div>
+            <div class="fs-item"><div class="fs-num">1500</div><div class="fs-label">XP макс</div></div>
+        </div>
+        <p class="fs-note">
+            <strong>Стратегия:</strong> 3 часа утром (пока мозг свежий) × 4 дня = запуск готов.
+            Или 1.5ч утром + 1.5ч после обеда × 4 дня. Не надо марафонить — СДВГ-мозг сгорит.
+        </p>
+    </div>
+</div>
+
+<!-- TIMER -->
+<div class="timer-float" id="timer">
+    <div class="timer-task" id="timer-task">—</div>
+    <div class="timer-display" id="timer-display">25:00</div>
+    <div class="timer-btns">
+        <button class="timer-btn timer-btn-start" id="timer-start" onclick="toggleTimer()">▶ Старт</button>
+        <button class="timer-btn timer-btn-stop" onclick="stopTimer()">⏹ Стоп</button>
+    </div>
+</div>
+
+<!-- REWARD POPUP -->
+<div class="reward-overlay" id="reward-overlay">
+    <div class="reward-card">
+        <div class="reward-emoji" id="reward-emoji">🏆</div>
+        <div class="reward-title" id="reward-title">Level Up!</div>
+        <div class="reward-desc" id="reward-desc">Ты перешёл на новый уровень!</div>
+        <button class="reward-btn" onclick="closeReward()">Погнали дальше →</button>
+    </div>
+</div>
+
+<script>
+(function() {
+    'use strict';
+
+    // ===== QUEST DATA =====
+    const phases = [
+        {
+            id: 1, name: '🔧 Фаза 1: УПАКОВКА', emoji: '🔧',
+            color: '#8b5cf6', desc: 'Доводим лендинг до состояния «хочу купить»',
+            quests: [
+                { id: 'p1q1', title: 'Скрины обучения → на лендинг', desc: 'Собери 6-8 скринов с обучения (чат, результаты, кодинг). Claude Code вставит.', time: 15, xp: 30 },
+                { id: 'p1q2', title: 'Фото/аватарки участников', desc: 'Запроси у 3-5 учеников фото + разрешение. Добавь в блок кейсов.', time: 20, xp: 40 },
+                { id: 'p1q3', title: 'Программа — детали и результаты', desc: 'В каждый модуль добавь: конкретный инструмент + скрин результата.', time: 30, xp: 50 },
+                { id: 'p1q4', title: 'Блок «Кто ведёт» — апгрейд', desc: 'Добавь фото, цифры (60 учеников, 12 ниш), социальное доказательство.', time: 20, xp: 40 },
+                { id: 'p1q5', title: 'Отзывы в голосовых/скринах', desc: 'Добавь блок с реальными скринами переписок/голосовых от учеников.', time: 25, xp: 50 },
+                { id: 'p1q6', title: 'FAQ — дополнить из стратсессий', desc: 'Добавь 3-5 вопросов, которые реально задавали на стратсессиях.', time: 20, xp: 30 },
+                { id: 'p1q7', title: 'Копирайтинг — пройтись по смыслам', desc: 'Перечитай лендинг глазами холодного лида. Усиль заголовки, CTA.', time: 30, xp: 50 },
+                { id: 'p1q8', title: 'Мобильная версия — проверить', desc: 'Открой на телефоне. Поправь что криво. 80% трафика — мобайл.', time: 15, xp: 30 },
+                { id: 'p1q9', title: 'VSL — написать сценарий', desc: 'Используй скилл VSL. 3-5 мин видео. Хук → Боль → Решение → Оффер → CTA.', time: 45, xp: 80 },
+                { id: 'p1q10', title: 'VSL — записать и вставить', desc: 'Запиши на телефон. Без перфекционизма. Вставь в hero-блок.', time: 30, xp: 60 },
+            ]
+        },
+        {
+            id: 2, name: '📢 Фаза 2: КОНТЕНТ', emoji: '📢',
+            color: '#ec4899', desc: 'Создаём волну — сторис, рилсы, посты',
+            quests: [
+                { id: 'p2q1', title: 'Telegram-пост: анонс 2-го потока', desc: 'Напиши продающий пост. Кейсы 1-го потока + новый оффер + CTA.', time: 30, xp: 50 },
+                { id: 'p2q2', title: 'Анкета предзаписи', desc: 'Сделай Google Form или Tally: имя, ниша, задача, бюджет, пакет.', time: 20, xp: 40 },
+                { id: 'p2q3', title: 'Stories: серия «Как я собрал»', desc: 'У тебя уже есть сценарий на 18 сторис! Просто записать.', time: 45, xp: 70 },
+                { id: 'p2q4', title: 'Stories: кейсы учеников', desc: 'По 2-3 сторис на каждого ученика. Скрин результата + голос.', time: 30, xp: 50 },
+                { id: 'p2q5', title: 'Stories: закулисье упаковки', desc: 'Покажи процесс: «вот я сижу, говорю в Claude Code, он делает».', time: 15, xp: 30 },
+                { id: 'p2q6', title: 'Reels: «Лендинг голосом за 2 часа»', desc: 'Хук → скринкаст процесса → результат. 30-60 сек.', time: 30, xp: 50 },
+                { id: 'p2q7', title: 'Reels: «$5000 vs $20/мес»', desc: 'Контраст подрядчики vs AI. Таблица на экране. Жёстко и быстро.', time: 30, xp: 50 },
+                { id: 'p2q8', title: 'Reels: кейс ученика (Dofaminomika)', desc: '2288 пользователей с 1 поста. Скрин → история → результат.', time: 25, xp: 40 },
+                { id: 'p2q9', title: 'Threads/LinkedIn пост', desc: 'Адаптируй Telegram-пост под Threads. Другой формат, та же суть.', time: 15, xp: 30 },
+                { id: 'p2q10', title: 'Контент-план на неделю запуска', desc: 'Разложи контент по дням: что, где, когда публикуешь.', time: 20, xp: 40 },
+            ]
+        },
+        {
+            id: 3, name: '💰 Фаза 3: ПРОДАЖИ', emoji: '💰',
+            color: '#22c55e', desc: 'Конвертируем лиды в оплаты',
+            quests: [
+                { id: 'p3q1', title: 'Скрипт: первое касание в ДМ', desc: 'Шаблон ответа на «Хочу». Квалификация + ссылка на анкету.', time: 20, xp: 40 },
+                { id: 'p3q2', title: 'Скрипт: после анкеты', desc: 'Персонализированный ответ по нише. Подбор пакета. Работа с возражениями.', time: 25, xp: 50 },
+                { id: 'p3q3', title: 'Скрипт: дожим (3 дня тишины)', desc: 'Мягкий follow-up. «Привет, видел ты заполнила анкету...»', time: 15, xp: 30 },
+                { id: 'p3q4', title: 'FAQ возражений для ассистентки', desc: 'Топ-10 возражений + готовые ответы. Копипаст-формат.', time: 25, xp: 50 },
+                { id: 'p3q5', title: 'AI-ассистент продаж — доделать', desc: 'Загрузи скрипты + FAQ + контекст продукта в ассистента.', time: 30, xp: 60 },
+                { id: 'p3q6', title: 'Передать ассистентке + обучить', desc: 'Созвон 15 мин: покажи как пользоваться ботом. Тестовый диалог.', time: 20, xp: 40 },
+            ]
+        },
+        {
+            id: 4, name: '🚀 Фаза 4: ЗАПУСК', emoji: '🚀',
+            color: '#f59e0b', desc: 'Нажимаем кнопку',
+            quests: [
+                { id: 'p4q1', title: 'Финальная проверка лендинга', desc: 'Прогони чеклист: формы работают, ссылки верные, мобайл ОК.', time: 15, xp: 40 },
+                { id: 'p4q2', title: 'Публикация Telegram-поста', desc: 'Пост + закреп. Включи комменты. Попроси 3 учеников написать отзыв.', time: 10, xp: 50 },
+                { id: 'p4q3', title: 'Запуск сторис-серии', desc: 'Выложи подготовленные сторис. Highlight «AI-Маркетолог 2.0».', time: 15, xp: 50 },
+                { id: 'p4q4', title: 'Первые 5 заявок — обработать', desc: 'Лично ответь первым 5. Задай тон для ассистентки.', time: 30, xp: 70 },
+            ]
+        }
+    ];
+
+    // ===== STATE =====
+    const STORAGE_KEY = 'launch-quest-v1';
+    let state = loadState();
+
+    function loadState() {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) return JSON.parse(saved);
+        } catch(e) {}
+        return { completed: [], streak: 0, lastComplete: null };
+    }
+    function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+    // ===== LEVELS =====
+    const levels = [
+        { lvl: 1, xp: 0, title: 'Новичок', emoji: '🌱' },
+        { lvl: 2, xp: 100, title: 'Стартер', emoji: '🔥' },
+        { lvl: 3, xp: 250, title: 'Движешься!', emoji: '⚡' },
+        { lvl: 4, xp: 450, title: 'Машина', emoji: '🏎️' },
+        { lvl: 5, xp: 700, title: 'Лид-магнит', emoji: '🧲' },
+        { lvl: 6, xp: 1000, title: 'Рокетмен', emoji: '🚀' },
+        { lvl: 7, xp: 1300, title: 'ЛЕГЕНДА', emoji: '👑' },
+    ];
+
+    function getLevel(xp) {
+        let current = levels[0];
+        for (const l of levels) { if (xp >= l.xp) current = l; }
+        return current;
+    }
+    function getNextLevel(xp) {
+        for (const l of levels) { if (xp < l.xp) return l; }
+        return null;
+    }
+
+    // ===== COMPUTED =====
+    function getAllQuests() {
+        return phases.flatMap(p => p.quests.map(q => ({ ...q, phase: p.id, phaseColor: p.color })));
+    }
+
+    function getTotalXP() {
+        return getAllQuests().filter(q => state.completed.includes(q.id)).reduce((s, q) => s + q.xp, 0);
+    }
+
+    function getDoneCount() { return state.completed.length; }
+    function getTotalCount() { return getAllQuests().length; }
+    function getTotalTime() {
+        return getAllQuests().filter(q => !state.completed.includes(q.id)).reduce((s, q) => s + q.time, 0);
+    }
+
+    // ===== RENDER =====
+    let activePhase = 'all';
+
+    function render() {
+        const xp = getTotalXP();
+        const done = getDoneCount();
+        const total = getTotalCount();
+        const pct = Math.round((done / total) * 100);
+        const level = getLevel(xp);
+        const next = getNextLevel(xp);
+
+        // Top bar
+        document.getElementById('level-num').textContent = level.lvl;
+        document.getElementById('xp-current').textContent = xp;
+        document.getElementById('xp-needed').textContent = next ? next.xp : 'MAX';
+        const xpPct = next ? ((xp - level.xp) / (next.xp - level.xp)) * 100 : 100;
+        document.getElementById('xp-fill').style.width = xpPct + '%';
+        document.getElementById('streak-count').textContent = state.streak;
+        document.getElementById('done-count').textContent = done;
+        const timeLeft = getTotalTime();
+        document.getElementById('time-left').textContent = timeLeft >= 60 ? Math.round(timeLeft / 60) + 'ч' : timeLeft + 'м';
+
+        // Ring
+        const circumference = 326.7;
+        document.getElementById('ring-fill').style.strokeDashoffset = circumference - (pct / 100) * circumference;
+        document.getElementById('ring-pct').textContent = pct + '%';
+
+        // Tabs
+        document.querySelectorAll('.phase-tab').forEach(tab => {
+            tab.classList.toggle('active', tab.dataset.phase === activePhase);
+        });
+
+        // Quests
+        const container = document.getElementById('quests-container');
+        container.innerHTML = '';
+
+        const visiblePhases = activePhase === 'all' ? phases : phases.filter(p => p.id === parseInt(activePhase));
+
+        visiblePhases.forEach(phase => {
+            const phaseDone = phase.quests.filter(q => state.completed.includes(q.id)).length;
+            const phasePct = (phaseDone / phase.quests.length) * 100;
+
+            const group = document.createElement('div');
+            group.className = 'phase-group visible';
+            group.innerHTML = `
+                <div class="phase-header">
+                    <span class="phase-emoji">${phase.emoji}</span>
+                    <span class="phase-name">${phase.name}</span>
+                    <span class="phase-time">${phaseDone}/${phase.quests.length} ✅</span>
+                </div>
+                <div class="phase-progress">
+                    <div class="phase-progress-fill" style="width:${phasePct}%;background:${phase.color}"></div>
+                </div>
+            `;
+
+            const questsDiv = document.createElement('div');
+            questsDiv.className = 'quests';
+
+            phase.quests.forEach(q => {
+                const isDone = state.completed.includes(q.id);
+                const el = document.createElement('div');
+                el.className = 'quest' + (isDone ? ' done' : '');
+                el.innerHTML = `
+                    <div class="quest-check">${isDone ? '✓' : ''}</div>
+                    <div class="quest-info">
+                        <div class="quest-title">${q.title}</div>
+                        <div class="quest-desc">${q.desc}</div>
+                    </div>
+                    <div class="quest-meta">
+                        <span class="quest-time">⏱ ${q.time}м</span>
+                        <span class="quest-xp">+${q.xp} XP</span>
+                    </div>
+                `;
+                el.addEventListener('click', () => toggleQuest(q.id, el));
+                questsDiv.appendChild(el);
+            });
+
+            group.appendChild(questsDiv);
+            container.appendChild(group);
+        });
+    }
+
+    function toggleQuest(id, el) {
+        const wasCompleted = state.completed.includes(id);
+        if (wasCompleted) {
+            state.completed = state.completed.filter(x => x !== id);
+            state.streak = Math.max(0, state.streak - 1);
+        } else {
+            state.completed.push(id);
+            state.streak++;
+            state.lastComplete = Date.now();
+
+            // Glow effect
+            el.classList.add('just-completed');
+            setTimeout(() => el.classList.remove('just-completed'), 1000);
+
+            // Check level up
+            const xpBefore = getTotalXP() - getAllQuests().find(q => q.id === id).xp;
+            const xpAfter = getTotalXP();
+            const levelBefore = getLevel(xpBefore);
+            const levelAfter = getLevel(xpAfter);
+
+            if (levelAfter.lvl > levelBefore.lvl) {
+                setTimeout(() => showReward(levelAfter), 500);
+            }
+
+            // Check phase complete
+            const quest = getAllQuests().find(q => q.id === id);
+            const phase = phases.find(p => p.id === quest.phase);
+            const phaseDone = phase.quests.every(q => state.completed.includes(q.id));
+            if (phaseDone) {
+                setTimeout(() => showReward({
+                    emoji: phase.emoji,
+                    title: phase.name + ' ЗАВЕРШЕНА!',
+                    desc: 'Фаза пройдена полностью. Ты машина!'
+                }, true), levelAfter.lvl > levelBefore.lvl ? 2000 : 500);
+            }
+
+            // Streak milestones
+            if (state.streak === 5) {
+                setTimeout(() => showReward({ emoji: '🔥', lvl: '', title: '5 ПОДРЯД!', desc: 'Огненная серия! Мозг в потоке. Не останавливайся!' }), 800);
+            }
+            if (state.streak === 10) {
+                setTimeout(() => showReward({ emoji: '🌋', lvl: '', title: '10 ПОДРЯД!', desc: 'НЕВОЗМОЖНО. Ты точно СДВГ? Это гиперфокус, детка.' }), 800);
+            }
+        }
+        saveState();
+        render();
+    }
+
+    // ===== REWARD =====
+    function showReward(level, isPhase) {
+        const overlay = document.getElementById('reward-overlay');
+        document.getElementById('reward-emoji').textContent = level.emoji || '🏆';
+        document.getElementById('reward-title').textContent = isPhase ? level.title : 'LEVEL ' + level.lvl + ': ' + level.title;
+        document.getElementById('reward-desc').textContent = level.desc || 'Новый уровень разблокирован! Продолжай жечь.';
+        overlay.classList.add('show');
+    }
+    window.closeReward = function() {
+        document.getElementById('reward-overlay').classList.remove('show');
+    };
+
+    // ===== TIMER =====
+    let timerInterval = null;
+    let timerSeconds = 25 * 60;
+    let timerRunning = false;
+
+    window.toggleTimer = function() {
+        if (timerRunning) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            document.getElementById('timer-start').textContent = '▶ Старт';
+        } else {
+            timerRunning = true;
+            document.getElementById('timer-start').textContent = '⏸ Пауза';
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    timerSeconds = 25 * 60;
+                    showReward({ emoji: '🍅', lvl: '', title: 'ПОМИДОРКА!', desc: 'Время вышло. Встань, потянись, попей воды. Потом — следующий квест.' });
+                }
+                updateTimerDisplay();
+            }, 1000);
+        }
+    };
+
+    window.stopTimer = function() {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        timerSeconds = 25 * 60;
+        updateTimerDisplay();
+        document.getElementById('timer-start').textContent = '▶ Старт';
+    };
+
+    function updateTimerDisplay() {
+        const m = Math.floor(timerSeconds / 60);
+        const s = timerSeconds % 60;
+        document.getElementById('timer-display').textContent = m.toString().padStart(2, '0') + ':' + s.toString().padStart(2, '0');
+    }
+
+    // Show timer
+    document.getElementById('timer').classList.add('active');
+
+    // ===== TABS =====
+    document.querySelectorAll('.phase-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            activePhase = tab.dataset.phase;
+            render();
+        });
+    });
+
+    // ===== INIT =====
+    render();
+
+    // Reset button (hidden in console)
+    window.resetQuest = function() {
+        state = { completed: [], streak: 0, lastComplete: null };
+        saveState();
+        render();
+    };
+
+})();
+</script>
+
+</body>
+</html>
