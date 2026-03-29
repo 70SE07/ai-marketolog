@@ -897,6 +897,82 @@
         }
 
         /* =============================================
+           BLOCK 6.5: MARQUEE TESTIMONIALS
+           ============================================= */
+        .marquee-wrap {
+            position: relative;
+            overflow: hidden;
+            -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+        }
+        .marquee-track {
+            display: flex;
+            gap: 16px;
+            width: max-content;
+        }
+        .marquee-left {
+            animation: marqueeLeft 40s linear infinite;
+        }
+        .marquee-right {
+            animation: marqueeRight 45s linear infinite;
+        }
+        .marquee-wrap:hover .marquee-track {
+            animation-play-state: paused;
+        }
+        @keyframes marqueeLeft {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        @keyframes marqueeRight {
+            0% { transform: translateX(-50%); }
+            100% { transform: translateX(0); }
+        }
+        .tcard {
+            flex-shrink: 0;
+            width: 340px;
+            padding: 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            transition: border-color 0.3s ease;
+        }
+        .tcard:hover {
+            border-color: rgba(139,92,246,0.4);
+        }
+        .tcard-top {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .tcard-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 800;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .tcard-name {
+            font-size: 14px;
+            font-weight: 700;
+        }
+        .tcard-role {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .tcard-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-style: italic;
+        }
+
+        /* =============================================
            BLOCK 6: CASES
            ============================================= */
         .cases-scroll-wrapper {
@@ -2208,36 +2284,48 @@
     </div>
 </section>
 
-<!-- ============ BLOCK 6.5: REAL QUOTES ============ -->
-<section style="padding:60px 0;">
-    <div class="container">
-        <h2 class="section-title reveal">Что говорят ученики <span class="gradient-text">в чате</span></h2>
-        <p style="text-align:center;color:var(--text-muted);font-size:14px;margin:-32px auto 32px;max-width:500px;" class="reveal">Реальные сообщения из Telegram-чата обучения. Без редактуры.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;">
-            <div class="card reveal" style="border-left:3px solid var(--accent-green);">
-                <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;font-style:italic;margin-bottom:10px;">&laquo;Сижу, делаю домашку и охереваю. Вот реально охереваю, потому что понимаю, насколько это всё упрощает жизнь, работу и всю систему.&raquo;</p>
-                <div style="font-size:12px;font-weight:700;color:var(--text-muted);">Виктория &mdash; HR/рекрутинг</div>
-            </div>
-            <div class="card reveal reveal-delay-1" style="border-left:3px solid var(--accent-purple);">
-                <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;font-style:italic;margin-bottom:10px;">&laquo;Это может решить 80% моих запросов! У меня прямо азарт!&raquo;</p>
-                <div style="font-size:12px;font-weight:700;color:var(--text-muted);">Татьяна &mdash; бизнес-психолог</div>
-            </div>
-            <div class="card reveal reveal-delay-2" style="border-left:3px solid var(--accent-blue);">
-                <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;font-style:italic;margin-bottom:10px;">&laquo;Я наконец чётко увидела, чего вообще хочу от этой жизни. Разложила по полочкам.&raquo;</p>
-                <div style="font-size:12px;font-weight:700;color:var(--text-muted);">Виктория &mdash; HR-консультант</div>
-            </div>
-            <div class="card reveal reveal-delay-3" style="border-left:3px solid #ec4899;">
-                <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;font-style:italic;margin-bottom:10px;">&laquo;У меня появилась надежда, что высвободится время на бОльшие проекты и свободное время на просто жизнь.&raquo;</p>
-                <div style="font-size:12px;font-weight:700;color:var(--text-muted);">Марина &mdash; терапевт</div>
-            </div>
-            <div class="card reveal" style="border-left:3px solid #f59e0b;">
-                <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;font-style:italic;margin-bottom:10px;">&laquo;Бля, какая крутая штука клод код! Прям разработчиком себя чувствую &#128514; Пилит мне расширение для хрома.&raquo;</p>
-                <div style="font-size:12px;font-weight:700;color:var(--text-muted);">Александра &mdash; предприниматель</div>
-            </div>
-            <div class="card reveal reveal-delay-1" style="border-left:3px solid var(--accent-green);">
-                <p style="font-size:14px;color:var(--text-secondary);line-height:1.6;font-style:italic;margin-bottom:10px;">&laquo;Меня вчера просто прорвало. Я наконец-то установила все скиллы, которые откладывала на потом.&raquo;</p>
-                <div style="font-size:12px;font-weight:700;color:var(--text-muted);">Руслана &mdash; проекты/локализация</div>
-            </div>
+<!-- ============ BLOCK 6.5: MARQUEE TESTIMONIALS ============ -->
+<section style="padding:60px 0;overflow:hidden;">
+    <div class="container" style="margin-bottom:32px;">
+        <div style="text-align:center;" class="reveal">
+            <span class="badge" style="margin-bottom:12px;">Telegram-чат обучения</span>
+        </div>
+        <h2 class="section-title reveal" style="margin-bottom:8px;">Что говорят ученики <span class="gradient-text">первого потока</span></h2>
+        <p style="text-align:center;color:var(--text-muted);font-size:14px;margin:0 auto;" class="reveal">Реальные сообщения. Без редактуры.</p>
+    </div>
+
+    <!-- Marquee track 1: left -->
+    <div class="marquee-wrap" style="margin-bottom:12px;">
+        <div class="marquee-track marquee-left">
+            <!-- Set 1 -->
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#8b5cf6,#6366f1)">ВК</div><div><div class="tcard-name">Виктория</div><div class="tcard-role">HR / рекрутинг</div></div></div><p class="tcard-text">&laquo;Сижу, делаю домашку и охереваю. Вот реально охереваю, потому что понимаю, насколько это всё упрощает жизнь, работу и всю систему.&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#ec4899,#8b5cf6)">ТХ</div><div><div class="tcard-name">Татьяна</div><div class="tcard-role">Бизнес-психолог</div></div></div><p class="tcard-text">&laquo;Это может решить 80% моих запросов! У меня прямо азарт и ощущение, что это может изменить всё!&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#3b82f6,#06b6d4)">АП</div><div><div class="tcard-name">Андрей</div><div class="tcard-role">Предприниматель</div></div></div><p class="tcard-text">&laquo;Я честно просто в диком ахуе от всех этих возможностей. Нужно быть полным долбоебом, чтобы не заработать на этом.&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#22c55e,#3b82f6)">МД</div><div><div class="tcard-name">Марина</div><div class="tcard-role">Терапевт</div></div></div><p class="tcard-text">&laquo;У меня появилась надежда, что высвободится время и энергия на бОльшие проекты и свободное время на просто жизнь.&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">АЛ</div><div><div class="tcard-name">Александра</div><div class="tcard-role">Предприниматель</div></div></div><p class="tcard-text">&laquo;Бля, какая крутая штука клод код! Прям разработчиком себя чувствую. Пилит мне расширение для хрома.&raquo;</p></div>
+            <!-- Duplicate for seamless loop -->
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#8b5cf6,#6366f1)">ВК</div><div><div class="tcard-name">Виктория</div><div class="tcard-role">HR / рекрутинг</div></div></div><p class="tcard-text">&laquo;Сижу, делаю домашку и охереваю. Вот реально охереваю, потому что понимаю, насколько это всё упрощает жизнь, работу и всю систему.&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#ec4899,#8b5cf6)">ТХ</div><div><div class="tcard-name">Татьяна</div><div class="tcard-role">Бизнес-психолог</div></div></div><p class="tcard-text">&laquo;Это может решить 80% моих запросов! У меня прямо азарт и ощущение, что это может изменить всё!&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#3b82f6,#06b6d4)">АП</div><div><div class="tcard-name">Андрей</div><div class="tcard-role">Предприниматель</div></div></div><p class="tcard-text">&laquo;Я честно просто в диком ахуе от всех этих возможностей. Нужно быть полным долбоебом, чтобы не заработать на этом.&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#22c55e,#3b82f6)">МД</div><div><div class="tcard-name">Марина</div><div class="tcard-role">Терапевт</div></div></div><p class="tcard-text">&laquo;У меня появилась надежда, что высвободится время и энергия на бОльшие проекты и свободное время на просто жизнь.&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">АЛ</div><div><div class="tcard-name">Александра</div><div class="tcard-role">Предприниматель</div></div></div><p class="tcard-text">&laquo;Бля, какая крутая штука клод код! Прям разработчиком себя чувствую. Пилит мне расширение для хрома.&raquo;</p></div>
+        </div>
+    </div>
+
+    <!-- Marquee track 2: right -->
+    <div class="marquee-wrap">
+        <div class="marquee-track marquee-right">
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6)">РО</div><div><div class="tcard-name">Руслана</div><div class="tcard-role">Локализация / проекты</div></div></div><p class="tcard-text">&laquo;Меня вчера просто прорвало. Я наконец-то установила все скиллы, которые откладывала на потом!&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6)">ВК</div><div><div class="tcard-name">Виктория</div><div class="tcard-role">HR-консультант</div></div></div><p class="tcard-text">&laquo;Я наконец загрузила всю свою литературу, разложила по полочкам и вдруг чётко увидела, чего вообще хочу от этой жизни.&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#22c55e,#06b6d4)">ЛВ</div><div><div class="tcard-name">Lilia</div><div class="tcard-role">Предприниматель</div></div></div><p class="tcard-text">&laquo;Мозок бурлить, кипить, генерує ідеї і каже: Іди роби, в процесі розберешся! І це мегакруто!&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#ef4444,#f59e0b)">ОС</div><div><div class="tcard-name">Олеся</div><div class="tcard-role">Семейный психолог</div></div></div><p class="tcard-text">&laquo;Сделала сценарий на 3 вирусных рилса, это так креативно и круто! Мне понравилось.&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#f59e0b,#22c55e)">СС</div><div><div class="tcard-name">Сергей</div><div class="tcard-role">Предприниматель</div></div></div><p class="tcard-text">&laquo;С каждым зумом все больше раскрываются возможности и новые идеи для себя. Уже начал работу с Gemini и NotebookLM.&raquo;</p></div>
+            <!-- Duplicate -->
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6)">РО</div><div><div class="tcard-name">Руслана</div><div class="tcard-role">Локализация / проекты</div></div></div><p class="tcard-text">&laquo;Меня вчера просто прорвало. Я наконец-то установила все скиллы, которые откладывала на потом!&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6)">ВК</div><div><div class="tcard-name">Виктория</div><div class="tcard-role">HR-консультант</div></div></div><p class="tcard-text">&laquo;Я наконец загрузила всю свою литературу, разложила по полочкам и вдруг чётко увидела, чего вообще хочу от этой жизни.&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#22c55e,#06b6d4)">ЛВ</div><div><div class="tcard-name">Lilia</div><div class="tcard-role">Предприниматель</div></div></div><p class="tcard-text">&laquo;Мозок бурлить, кипить, генерує ідеї і каже: Іди роби, в процесі розберешся! І це мегакруто!&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#ef4444,#f59e0b)">ОС</div><div><div class="tcard-name">Олеся</div><div class="tcard-role">Семейный психолог</div></div></div><p class="tcard-text">&laquo;Сделала сценарий на 3 вирусных рилса, это так креативно и круто! Мне понравилось.&raquo;</p></div>
+            <div class="tcard"><div class="tcard-top"><div class="tcard-avatar" style="background:linear-gradient(135deg,#f59e0b,#22c55e)">СС</div><div><div class="tcard-name">Сергей</div><div class="tcard-role">Предприниматель</div></div></div><p class="tcard-text">&laquo;С каждым зумом все больше раскрываются возможности и новые идеи для себя. Уже начал работу с Gemini и NotebookLM.&raquo;</p></div>
         </div>
     </div>
 </section>
