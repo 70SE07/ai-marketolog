@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест: На каком уровне ты работаешь с AI? | AI-Маркетолог</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0a; --surface: #1a1a2e; --border: #2a2a3e;
+            --text: #f5f5f5; --text2: #a1a1aa; --text3: #71717a;
+            --purple: #8b5cf6; --blue: #3b82f6; --green: #22c55e;
+            --red: #ef4444; --amber: #f59e0b;
+            --font: 'Inter', sans-serif;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+        .quiz-container { max-width: 640px; width: 100%; }
+
+        /* Progress */
+        .quiz-progress { margin-bottom: 24px; }
+        .quiz-progress-bar { height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+        .quiz-progress-fill { height: 100%; background: linear-gradient(90deg, var(--purple), var(--blue)); border-radius: 2px; transition: width 0.4s ease; }
+        .quiz-progress-text { font-size: 12px; color: var(--text3); margin-top: 6px; text-align: right; }
+
+        /* Question card */
+        .quiz-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: 16px; padding: 32px; position: relative;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .quiz-emoji { font-size: 40px; margin-bottom: 16px; }
+        .quiz-question { font-size: 20px; font-weight: 800; margin-bottom: 24px; line-height: 1.3; }
+        @media (min-width: 640px) { .quiz-question { font-size: 24px; } }
+
+        /* Options */
+        .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+        .quiz-option {
+            padding: 16px 20px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border); border-radius: 10px;
+            cursor: pointer; transition: all 0.2s ease;
+            font-size: 15px; line-height: 1.5; display: flex; align-items: center; gap: 12px;
+        }
+        .quiz-option:hover { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.05); transform: translateX(4px); }
+        .quiz-option.selected { border-color: var(--purple); background: rgba(139,92,246,0.1); }
+        .quiz-option-letter {
+            width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0;
+            background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; color: var(--purple);
+        }
+        .quiz-option.selected .quiz-option-letter { background: var(--purple); color: #fff; }
+
+        /* Result */
+        .quiz-result { display: none; text-align: center; }
+        .quiz-result.show { display: block; }
+        .result-emoji { font-size: 64px; margin-bottom: 16px; }
+        .result-level { font-size: 14px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+        .result-title { font-size: 28px; font-weight: 900; margin-bottom: 12px; }
+        .result-desc { font-size: 15px; color: var(--text2); line-height: 1.6; margin-bottom: 24px; }
+        .result-reco {
+            text-align: left; padding: 20px; background: rgba(34,197,94,0.06);
+            border: 1px solid rgba(34,197,94,0.2); border-radius: 10px; margin-bottom: 24px;
+        }
+        .result-reco-title { font-size: 13px; font-weight: 700; color: var(--green); margin-bottom: 8px; }
+        .result-reco-text { font-size: 14px; color: var(--text2); line-height: 1.6; }
+        .result-cta {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 16px 32px; background: var(--green); color: #fff;
+            font-size: 17px; font-weight: 700; border-radius: 8px; border: none;
+            cursor: pointer; font-family: var(--font); text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        .result-cta:hover { filter: brightness(1.1); transform: translateY(-2px); }
+        .result-sub { font-size: 12px; color: var(--text3); margin-top: 10px; }
+        .result-back { display: inline-block; margin-top: 16px; font-size: 13px; color: var(--text3); cursor: pointer; text-decoration: underline; }
+
+        /* Hidden */
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <!-- Progress -->
+    <div class="quiz-progress" id="quiz-progress">
+        <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-fill" style="width:0%"></div></div>
+        <div class="quiz-progress-text"><span id="quiz-step">0</span> из 7</div>
+    </div>
+
+    <!-- Questions -->
+    <div id="quiz-questions">
+        <!-- Filled by JS -->
+    </div>
+
+    <!-- Result -->
+    <div class="quiz-result" id="quiz-result">
+        <div class="quiz-card">
+            <div class="result-emoji" id="r-emoji"></div>
+            <div class="result-level" id="r-level"></div>
+            <div class="result-title" id="r-title"></div>
+            <div class="result-desc" id="r-desc"></div>
+            <div class="result-reco">
+                <div class="result-reco-title">Рекомендация для тебя:</div>
+                <div class="result-reco-text" id="r-reco"></div>
+            </div>
+            <a href="index.html#packages" class="result-cta">Забрать AI-систему по предпродаже &rarr;</a>
+            <div class="result-sub">от $250 &middot; старт 5 апреля &middot; 100% возврат 14 дней</div>
+            <div class="result-back" onclick="restartQuiz()">Пройти ещё раз</div>
+        </div>
+    </div>
+</div>
+
+<script>
+const questions = [
+    {
+        emoji: '🤖', q: 'Какой AI-инструмент ты используешь чаще всего?',
+        opts: [
+            { t: 'Никакой, пока только слышала', s: 0 },
+            { t: 'ChatGPT — иногда спрашиваю что-то', s: 1 },
+            { t: 'ChatGPT + Canva/другие — регулярно', s: 2 },
+            { t: 'Claude, Gemini, Perplexity — целый стек', s: 3 },
+        ]
+    },
+    {
+        emoji: '💰', q: 'Сколько ты тратишь на подрядчиков в месяц (дизайн, тексты, SMM)?',
+        opts: [
+            { t: 'Ничего — всё делаю сама', s: 1 },
+            { t: '$100–$500', s: 2 },
+            { t: '$500–$2000', s: 3 },
+            { t: 'Больше $2000', s: 3 },
+        ]
+    },
+    {
+        emoji: '⏰', q: 'Сколько времени в неделю уходит на маркетинговую рутину?',
+        opts: [
+            { t: 'Не занимаюсь маркетингом', s: 0 },
+            { t: '2–5 часов', s: 1 },
+            { t: '5–15 часов', s: 2 },
+            { t: 'Больше 15 часов — это моя жизнь', s: 3 },
+        ]
+    },
+    {
+        emoji: '🌐', q: 'Есть ли у тебя лендинг / сайт?',
+        opts: [
+            { t: 'Нет и не понимаю зачем', s: 0 },
+            { t: 'Нет, но понимаю что нужен', s: 1 },
+            { t: 'Да, но платила дизайнеру/верстальщику', s: 2 },
+            { t: 'Да, делала сама через конструктор или AI', s: 3 },
+        ]
+    },
+    {
+        emoji: '📱', q: 'Как ты создаёшь контент?',
+        opts: [
+            { t: 'Не создаю — не знаю как начать', s: 0 },
+            { t: 'Руками: пишу посты, снимаю сторис', s: 1 },
+            { t: 'Иногда ChatGPT помогает с текстами', s: 2 },
+            { t: 'AI-система: промпты + генерация + автоматизация', s: 3 },
+        ]
+    },
+    {
+        emoji: '🔄', q: 'Знаешь ли ты, что такое AI-агенты и скиллы?',
+        opts: [
+            { t: 'Первый раз слышу', s: 0 },
+            { t: 'Слышала, но не понимаю', s: 1 },
+            { t: 'Примерно понимаю, но не использую', s: 2 },
+            { t: 'Использую: Claude Code, MCP, кастомные скиллы', s: 3 },
+        ]
+    },
+    {
+        emoji: '🎯', q: 'Какая у тебя главная цель прямо сейчас?',
+        opts: [
+            { t: 'Разобраться, что вообще AI может для меня', s: 0 },
+            { t: 'Начать использовать AI в работе', s: 1 },
+            { t: 'Заменить подрядчиков и делать всё самой', s: 2 },
+            { t: 'Построить полную AI-систему маркетинга', s: 3 },
+        ]
+    },
+];
+
+const levels = [
+    { min: 0, max: 5, emoji: '🌱', level: 'Уровень 1 из 4', title: 'Новичок', desc: 'Ты в самом начале пути. AI для тебя — загадка, но ты уже здесь, а значит — впереди всех, кто ещё даже не задумался. Хорошая новость: в 2026 году начинать с нуля проще, чем год назад.', reco: 'Тебе идеально подойдёт воркшоп «AI-Маркетолог»: мы начинаем с базы, и уже на первом модуле ты настроишь систему и сделаешь первый результат. Влад делает в прямом эфире — ты повторяешь. Не нужно быть технарём.' },
+    { min: 6, max: 10, emoji: '🔥', level: 'Уровень 2 из 4', title: 'Стартер', desc: 'Ты уже пробуешь, но хаотично. ChatGPT знаком, но результат — непредсказуемый. Тратишь время на рутину, которую AI может делать за 15 минут. Тебе не хватает системы.', reco: 'Воркшоп даст тебе то, чего не хватает: систему из 27 готовых AI-сотрудников + пошаговый пайплайн. Через 2 месяца ты будешь делать за 30 минут то, на что сейчас уходит 3 часа. Групповой пакет ($500) — идеально для тебя.' },
+    { min: 11, max: 16, emoji: '⚡', level: 'Уровень 3 из 4', title: 'Продвинутый', desc: 'Ты активно используешь AI, но ещё платишь подрядчикам и не автоматизировала процессы. Знаешь больше 90% людей, но до полной системы — один шаг.', reco: 'Тебе нужен последний рывок: AI-агенты, вайб-кодинг, контент-завод на 16 форматов. Пакет со стратсессией ($800) — Влад лично разберёт твой бизнес и покажет, где ты теряешь деньги.' },
+    { min: 17, max: 21, emoji: '👑', level: 'Уровень 4 из 4', title: 'AI-Мастер', desc: 'Ты уже на высоком уровне. Claude Code, скиллы, MCP — для тебя не пустые слова. Но даже мастерам нужны новые инструменты и комьюнити.', reco: 'Тебе подойдёт пакет со стратсессией ($800): получишь 27 готовых сотрудников Влада (каждый создавался 5-10 часов), доступ к комьюнити и свежие методологии, которых нет в открытом доступе.' },
+];
+
+let currentQ = 0;
+let score = 0;
+const letters = ['A', 'B', 'C', 'D'];
+
+function renderQuestion() {
+    const q = questions[currentQ];
+    const container = document.getElementById('quiz-questions');
+    document.getElementById('quiz-fill').style.width = ((currentQ / questions.length) * 100) + '%';
+    document.getElementById('quiz-step').textContent = currentQ + 1;
+
+    container.innerHTML = `
+        <div class="quiz-card" key="${currentQ}">
+            <div class="quiz-emoji">${q.emoji}</div>
+            <div class="quiz-question">${q.q}</div>
+            <div class="quiz-options">
+                ${q.opts.map((o, i) => `
+                    <div class="quiz-option" onclick="selectOption(${i}, ${o.s})">
+                        <div class="quiz-option-letter">${letters[i]}</div>
+                        <span>${o.t}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+}
+
+function selectOption(idx, points) {
+    score += points;
+    const opts = document.querySelectorAll('.quiz-option');
+    opts[idx].classList.add('selected');
+
+    setTimeout(() => {
+        currentQ++;
+        if (currentQ < questions.length) {
+            renderQuestion();
+        } else {
+            showResult();
+        }
+    }, 400);
+}
+
+function showResult() {
+    document.getElementById('quiz-questions').classList.add('hidden');
+    document.getElementById('quiz-progress').classList.add('hidden');
+    const result = document.getElementById('quiz-result');
+    result.classList.add('show');
+
+    const level = levels.find(l => score >= l.min && score <= l.max) || levels[levels.length - 1];
+    document.getElementById('r-emoji').textContent = level.emoji;
+    document.getElementById('r-level').textContent = level.level;
+    document.getElementById('r-title').textContent = level.title;
+    document.getElementById('r-desc').textContent = level.desc;
+    document.getElementById('r-reco').textContent = level.reco;
+
+    document.getElementById('quiz-fill').style.width = '100%';
+}
+
+function restartQuiz() {
+    currentQ = 0; score = 0;
+    document.getElementById('quiz-questions').classList.remove('hidden');
+    document.getElementById('quiz-progress').classList.remove('hidden');
+    document.getElementById('quiz-result').classList.remove('show');
+    renderQuestion();
+}
+
+renderQuestion();
+</script>
+
+</body>
+</html>
