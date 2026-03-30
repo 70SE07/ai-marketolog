@@ -1743,8 +1743,10 @@
             .trust-item { font-size: 12px; }
 
             /* Marquee mobile */
-            .tcard { width: 280px; padding: 16px; }
-            .tcard-text { font-size: 13px; }
+            .tcard { width: 260px; padding: 14px; }
+            .tcard-text { font-size: 12px; line-height: 1.5; }
+            .tcard-name { font-size: 13px; }
+            .tcard-avatar { width: 34px; height: 34px; font-size: 11px; }
 
             /* Contrast mobile */
             .contrast-table { flex-direction: column; }
@@ -1793,6 +1795,12 @@
 
             /* Section padding mobile */
             section { padding: 48px 0; }
+
+            /* Table comparison mobile */
+            table th, table td { padding: 8px 10px !important; font-size: 11px !important; }
+
+            /* Niche badges mobile */
+            #forwho-top + section .container > div:last-child span { font-size: 10px; padding: 3px 8px; }
 
             /* Counter mobile */
             .factory-counter { gap: 16px; }
@@ -3027,8 +3035,9 @@
 <section style="padding:60px 0;">
     <div class="container">
         <h2 class="section-title reveal">Почему не YouTube, не другой курс, <span class="gradient-text">не самостоятельно?</span></h2>
-        <div class="reveal reveal-delay-1" style="overflow-x:auto;">
-            <table style="width:100%;min-width:700px;border-collapse:separate;border-spacing:0;font-size:13px;">
+        <div class="reveal reveal-delay-1" style="overflow-x:auto;-webkit-overflow-scrolling:touch;position:relative;">
+            <div class="swipe-hint" style="margin-bottom:8px;">&#8592; листай таблицу &#8594;</div>
+            <table style="width:100%;min-width:640px;border-collapse:separate;border-spacing:0;font-size:12px;">
                 <thead>
                     <tr>
                         <th style="padding:12px 16px;text-align:left;color:var(--text-muted);font-weight:600;border-bottom:1px solid var(--border);"></th>
@@ -3064,7 +3073,7 @@
                 <div class="package-price" style="display:flex;align-items:baseline;gap:10px;justify-content:center;">$250 <span style="font-size:16px;color:var(--text-muted);text-decoration:line-through;font-weight:400;">$297</span></div>
                 <div class="package-installment">Для тех, кто уже работает с AI и разберётся сам</div>
                 <div class="package-features">
-                    <div class="package-feature included"><span class="pf-icon">&#10003;</span> Все 7 блоков в записи</div>
+                    <div class="package-feature included"><span class="pf-icon">&#10003;</span> Все 8 модулей в записи</div>
                     <div class="package-feature included"><span class="pf-icon">&#10003;</span> Записи 1-го потока</div>
                     <div class="package-feature included"><span class="pf-icon">&#10003;</span> 27 цифровых сотрудников</div>
                     <div class="package-feature excluded"><span class="pf-icon">&#10007;</span> Live-сессии и Q&A</div>
@@ -3080,7 +3089,7 @@
                 <div class="package-price" style="display:flex;align-items:baseline;gap:10px;justify-content:center;">$500 <span style="font-size:16px;color:var(--text-muted);text-decoration:line-through;font-weight:400;">$597</span></div>
                 <div class="package-installment">Хочешь внедрить AI с поддержкой &mdash; 70% выбирают этот</div>
                 <div class="package-features">
-                    <div class="package-feature included"><span class="pf-icon">&#10003;</span> Все 7 блоков в записи</div>
+                    <div class="package-feature included"><span class="pf-icon">&#10003;</span> Все 8 модулей в записи</div>
                     <div class="package-feature included"><span class="pf-icon">&#10003;</span> Записи 1-го потока</div>
                     <div class="package-feature included"><span class="pf-icon">&#10003;</span> 27 цифровых сотрудников</div>
                     <div class="package-feature included"><span class="pf-icon">&#10003;</span> Live-сессии + Q&A каждую неделю</div>
