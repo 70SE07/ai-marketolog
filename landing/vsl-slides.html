@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AI-МАРКЕТОЛОГ | Второй Поток</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/*! ===== RESET ===== */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#050510;
+  --surface:#0a0a1a;
+  --purple:#8b5cf6;--purple-dim:rgba(139,92,246,.12);
+  --blue:#3b82f6;--blue-dim:rgba(59,130,246,.1);
+  --green:#22c55e;--green-dim:rgba(34,197,94,.1);
+  --amber:#f59e0b;--amber-dim:rgba(245,158,11,.1);
+  --red:#ef4444;--red-dim:rgba(239,68,68,.1);
+  --cyan:#06b6d4;
+  --text:#f0f0f5;--muted:#7c8ba1;--muted-light:#94a3b8;
+  --card:rgba(255,255,255,0.03);--card-border:rgba(255,255,255,0.06);
+  --glass:rgba(255,255,255,0.04);--glass-border:rgba(255,255,255,0.08);
+}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,.headline{font-family:'Manrope',sans-serif;font-weight:800}
+::selection{background:rgba(139,92,246,.3);color:#fff}
+
+/*! ===== PROGRESS BAR ===== */
+#progress-wrap{position:fixed;top:0;left:0;width:100%;height:3px;background:rgba(255,255,255,.03);z-index:1000}
+#progress{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan),var(--green));width:0;transition:width .4s cubic-bezier(.4,0,.2,1);box-shadow:0 0 12px rgba(139,92,246,.4)}
+#counter{position:fixed;bottom:24px;right:28px;z-index:1000;font-family:'Manrope',sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,.2);letter-spacing:2px;pointer-events:none}
+.hint{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:1000;color:rgba(255,255,255,.15);font-size:11px;letter-spacing:3px;text-transform:uppercase;transition:opacity 1s;font-weight:500}
+.hint.hidden{opacity:0;pointer-events:none}
+.hint span{display:inline-block;animation:hintBounce 2s ease-in-out infinite}
+@keyframes hintBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/*! ===== NOISE OVERLAY ===== */
+body::before{content:'';position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  opacity:.4}
+
+/*! ===== PARTICLES ===== */
+#particles{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none}
+
+/*! ===== SLIDE BASE ===== */
+.slide{
+  min-height:100vh;width:100%;display:flex;align-items:center;justify-content:center;
+  scroll-snap-align:start;position:relative;overflow:hidden;padding:60px 6vw;
+}
+.slide-inner{max-width:1200px;width:100%;position:relative;z-index:2;text-align:center}
+
+/*! ===== VOLUMETRIC GLOWS ===== */
+.glow{position:absolute;border-radius:50%;pointer-events:none;z-index:0;will-change:transform}
+.glow-purple{background:radial-gradient(circle,rgba(139,92,246,.2) 0%,transparent 70%)}
+.glow-blue{background:radial-gradient(circle,rgba(59,130,246,.18) 0%,transparent 70%)}
+.glow-green{background:radial-gradient(circle,rgba(34,197,94,.15) 0%,transparent 70%)}
+.glow-amber{background:radial-gradient(circle,rgba(245,158,11,.15) 0%,transparent 70%)}
+.glow-red{background:radial-gradient(circle,rgba(239,68,68,.18) 0%,transparent 70%)}
+.glow-cyan{background:radial-gradient(circle,rgba(6,182,212,.12) 0%,transparent 70%)}
+.glow-lg{width:800px;height:800px}.glow-md{width:500px;height:500px}.glow-sm{width:350px;height:350px}
+
+/*! ===== KEYFRAMES ===== */
+@keyframes fadeUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-40px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.8)}to{opacity:1;transform:scale(1)}}
+@keyframes scaleInBig{from{opacity:0;transform:scale(.5)}to{opacity:1;transform:scale(1)}}
+@keyframes slideLeft{from{opacity:0;transform:translateX(-60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideRight{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:translateX(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(80px)}to{opacity:1;transform:translateY(0)}}
+@keyframes rotateIn{from{opacity:0;transform:rotate(-10deg) scale(.8)}to{opacity:1;transform:rotate(0) scale(1)}}
+@keyframes blurIn{from{opacity:0;filter:blur(20px)}to{opacity:1;filter:blur(0)}}
+@keyframes glitchIn{0%{opacity:0;transform:translate(-4px,2px)}20%{opacity:.6;transform:translate(3px,-1px)}40%{opacity:.8;transform:translate(-2px,3px)}60%{opacity:.9;transform:translate(1px,-2px)}100%{opacity:1;transform:translate(0)}}
+@keyframes typeReveal{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulseGlow{0%,100%{box-shadow:0 0 20px rgba(139,92,246,.2),0 0 60px rgba(139,92,246,.1)}50%{box-shadow:0 0 30px rgba(139,92,246,.4),0 0 100px rgba(139,92,246,.2)}}
+@keyframes pulseBorder{0%,100%{border-color:rgba(139,92,246,.3)}50%{border-color:rgba(139,92,246,.7)}}
+@keyframes breathe{0%,100%{opacity:.15;transform:scale(1)}50%{opacity:.25;transform:scale(1.05)}}
+@keyframes orbFloat{0%{transform:translate(0,0) rotate(0deg)}25%{transform:translate(10px,-15px) rotate(2deg)}50%{transform:translate(-5px,-25px) rotate(-1deg)}75%{transform:translate(-15px,-10px) rotate(1deg)}100%{transform:translate(0,0) rotate(0deg)}}
+@keyframes counterPop{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes lineGrow{from{width:0}to{width:100%}}
+@keyframes dashDraw{to{stroke-dashoffset:0}}
+
+.anim{opacity:0;transition:none}
+.anim.v{animation-fill-mode:both}
+.anim.fadeUp.v{animation:fadeUp .7s cubic-bezier(.22,1,.36,1) forwards}
+.anim.fadeDown.v{animation:fadeDown .7s cubic-bezier(.22,1,.36,1) forwards}
+.anim.fadeIn.v{animation:fadeIn .6s ease forwards}
+.anim.scaleIn.v{animation:scaleIn .6s cubic-bezier(.22,1,.36,1) forwards}
+.anim.scaleInBig.v{animation:scaleInBig .8s cubic-bezier(.22,1,.36,1) forwards}
+.anim.slideLeft.v{animation:slideLeft .7s cubic-bezier(.22,1,.36,1) forwards}
+.anim.slideRight.v{animation:slideRight .7s cubic-bezier(.22,1,.36,1) forwards}
+.anim.slideUp.v{animation:slideUp .8s cubic-bezier(.22,1,.36,1) forwards}
+.anim.rotateIn.v{animation:rotateIn .7s cubic-bezier(.22,1,.36,1) forwards}
+.anim.blurIn.v{animation:blurIn .8s ease forwards}
+.anim.glitchIn.v{animation:glitchIn .5s ease forwards}
+.anim.typeReveal.v{animation:typeReveal .8s cubic-bezier(.22,1,.36,1) forwards}
+.d0{animation-delay:0s!important}.d1{animation-delay:.1s!important}.d2{animation-delay:.2s!important}
+.d3{animation-delay:.3s!important}.d4{animation-delay:.4s!important}.d5{animation-delay:.5s!important}
+.d6{animation-delay:.6s!important}.d7{animation-delay:.7s!important}.d8{animation-delay:.8s!important}
+.d9{animation-delay:.9s!important}.d10{animation-delay:1s!important}.d11{animation-delay:1.1s!important}
+.d12{animation-delay:1.2s!important}.d13{animation-delay:1.3s!important}.d14{animation-delay:1.4s!important}
+.d15{animation-delay:1.5s!important}.d16{animation-delay:1.6s!important}.d17{animation-delay:1.7s!important}
+.d18{animation-delay:1.8s!important}.d19{animation-delay:1.9s!important}.d20{animation-delay:2s!important}
+
+/*! ===== TYPOGRAPHY ===== */
+.mega{font-size:clamp(3.5rem,9vw,9rem);line-height:.95;font-weight:800;letter-spacing:-3px}
+.huge{font-size:clamp(2.2rem,5.5vw,5.5rem);line-height:1.05;font-weight:800;letter-spacing:-2px}
+.big{font-size:clamp(1.5rem,3vw,3rem);line-height:1.2;font-weight:700;letter-spacing:-.5px}
+.medium{font-size:clamp(1rem,1.8vw,1.5rem);line-height:1.5;font-weight:400}
+.small{font-size:clamp(.8rem,1.2vw,1rem);line-height:1.6;font-weight:400;color:var(--muted)}
+.xs{font-size:clamp(.7rem,1vw,.85rem);color:var(--muted);letter-spacing:.5px}
+
+.gradient-purple{background:linear-gradient(135deg,#a78bfa,var(--purple),#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gradient-blue{background:linear-gradient(135deg,#60a5fa,var(--blue),#2563eb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gradient-green{background:linear-gradient(135deg,#4ade80,var(--green),#16a34a);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gradient-amber{background:linear-gradient(135deg,#fbbf24,var(--amber),#d97706);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gradient-red{background:linear-gradient(135deg,#f87171,var(--red),#dc2626);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.gradient-multi{background:linear-gradient(135deg,var(--purple),var(--blue),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.shimmer-text{
+  background:linear-gradient(90deg,var(--text) 0%,rgba(139,92,246,.8) 25%,var(--text) 50%,rgba(59,130,246,.8) 75%,var(--text) 100%);
+  background-size:400% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  animation:shimmer 4s linear infinite}
+.text-purple{color:var(--purple)}.text-blue{color:var(--blue)}.text-green{color:var(--green)}.text-amber{color:var(--amber)}.text-red{color:var(--red)}.text-cyan{color:var(--cyan)}
+
+/*! ===== TAGS ===== */
+.tag{display:inline-flex;align-items:center;gap:6px;padding:6px 18px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;backdrop-filter:blur(8px)}
+.tag-purple{background:rgba(139,92,246,.1);color:var(--purple);border:1px solid rgba(139,92,246,.2)}
+.tag-blue{background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.2)}
+.tag-green{background:rgba(34,197,94,.1);color:var(--green);border:1px solid rgba(34,197,94,.2)}
+.tag-amber{background:rgba(245,158,11,.1);color:var(--amber);border:1px solid rgba(245,158,11,.2)}
+.tag-red{background:rgba(239,68,68,.1);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.tag-glass{background:rgba(255,255,255,.04);color:var(--muted-light);border:1px solid rgba(255,255,255,.08)}
+
+/*! ===== CARDS ===== */
+.card{background:var(--glass);border:1px solid var(--glass-border);border-radius:16px;padding:28px;backdrop-filter:blur(12px);transition:all .3s ease}
+.card:hover{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.06)}
+.card-glow-purple{box-shadow:0 4px 40px rgba(139,92,246,.06),inset 0 1px 0 rgba(139,92,246,.1)}
+.card-glow-blue{box-shadow:0 4px 40px rgba(59,130,246,.06),inset 0 1px 0 rgba(59,130,246,.1)}
+.card-glow-green{box-shadow:0 4px 40px rgba(34,197,94,.06),inset 0 1px 0 rgba(34,197,94,.1)}
+.card-highlight{border-color:var(--purple)!important;box-shadow:0 0 40px rgba(139,92,246,.1),0 0 80px rgba(139,92,246,.05);animation:pulseBorder 3s ease-in-out infinite}
+
+/*! ===== GRIDS ===== */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+/*! ===== SKILL NUMBER ===== */
+.skill-badge{
+  display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;
+  border-radius:16px;font-size:22px;font-weight:800;font-family:'Manrope',sans-serif;
+  margin-bottom:20px;position:relative;
+}
+.skill-badge::before{content:'';position:absolute;inset:-2px;border-radius:18px;padding:2px;
+  background:linear-gradient(135deg,var(--purple),var(--blue));-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.skill-badge span{position:relative;z-index:1}
+
+/*! ===== PIPELINE ===== */
+.pipeline{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}
+.pipe-step{
+  background:var(--glass);border:1px solid var(--glass-border);border-radius:12px;
+  padding:14px 18px;font-size:13px;font-weight:600;position:relative;
+  transition:all .6s cubic-bezier(.22,1,.36,1);opacity:0;transform:scale(.7) translateY(10px);
+}
+.pipe-step.lit{opacity:1;transform:scale(1) translateY(0);border-color:var(--purple);
+  background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(59,130,246,.06));
+  box-shadow:0 0 24px rgba(139,92,246,.15),inset 0 1px 0 rgba(139,92,246,.15)}
+.pipe-arrow{font-size:18px;color:rgba(139,92,246,.2);transition:all .4s;transform:scale(.5);opacity:0}
+.pipe-arrow.lit{color:var(--purple);transform:scale(1);opacity:1}
+
+/*! ===== FUNNEL ===== */
+.funnel{display:flex;flex-direction:column;align-items:center;gap:2px}
+.funnel-step{
+  padding:16px;border-radius:12px;font-weight:600;font-size:15px;text-align:center;
+  opacity:0;transform:translateY(20px) scaleX(.8);transition:all .5s cubic-bezier(.22,1,.36,1);
+}
+.funnel-step.lit{opacity:1;transform:translateY(0) scaleX(1)}
+.funnel-arrow{font-size:20px;opacity:0;transition:opacity .3s;color:rgba(255,255,255,.15)}
+.funnel-arrow.lit{opacity:1}
+
+/*! ===== QUOTE CARD ===== */
+.quote-wrap{
+  background:linear-gradient(135deg,rgba(139,92,246,.06),rgba(59,130,246,.03));
+  border:1px solid rgba(139,92,246,.15);border-radius:28px;padding:52px 48px 44px;
+  max-width:720px;margin:0 auto;position:relative;overflow:hidden;
+  backdrop-filter:blur(16px);
+}
+.quote-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(139,92,246,.4),transparent)}
+.quote-wrap::after{content:'\201C';position:absolute;top:12px;left:28px;font-size:100px;
+  color:rgba(139,92,246,.08);font-family:Georgia,serif;line-height:1}
+.quote-text{font-size:clamp(1.3rem,3vw,2.2rem);font-weight:700;font-family:'Manrope',sans-serif;line-height:1.3;position:relative;z-index:1}
+.quote-meta{margin-top:24px;display:flex;align-items:center;justify-content:center;gap:12px;position:relative;z-index:1}
+.quote-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;
+  border:2px solid rgba(139,92,246,.3)}
+.quote-info{text-align:left}
+.quote-name{font-weight:700;font-size:14px;color:var(--purple)}
+.quote-role{font-size:12px;color:var(--muted)}
+
+/*! ===== PACKAGES ===== */
+.pkg{border-radius:24px;padding:40px 28px;text-align:center;position:relative;overflow:hidden;transition:transform .3s}
+.pkg::before{content:'';position:absolute;top:0;left:0;right:0;height:1px}
+.pkg-std{background:var(--glass);border:1px solid var(--glass-border)}
+.pkg-std::before{background:linear-gradient(90deg,transparent,rgba(59,130,246,.3),transparent)}
+.pkg-pop{background:linear-gradient(180deg,rgba(139,92,246,.08),rgba(59,130,246,.03));
+  border:1.5px solid rgba(139,92,246,.3);animation:pulseGlow 3s ease-in-out infinite}
+.pkg-pop::before{background:linear-gradient(90deg,transparent,rgba(139,92,246,.5),transparent)}
+.pkg-prem{background:linear-gradient(180deg,rgba(245,158,11,.06),rgba(239,68,68,.02));
+  border:1px solid rgba(245,158,11,.2)}
+.pkg-prem::before{background:linear-gradient(90deg,transparent,rgba(245,158,11,.3),transparent)}
+.pkg-badge{position:absolute;top:0;right:20px;background:linear-gradient(135deg,var(--purple),var(--blue));
+  color:#fff;font-size:10px;font-weight:700;padding:6px 14px;border-radius:0 0 10px 10px;
+  letter-spacing:1.5px;text-transform:uppercase}
+.pkg-price{font-size:clamp(2.8rem,5vw,4rem);font-weight:800;font-family:'Manrope',sans-serif;margin:14px 0 6px;line-height:1}
+.pkg-name{font-size:.9rem;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--muted-light)}
+.pkg-list{list-style:none;text-align:left;margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.pkg-list li{font-size:13px;color:var(--muted-light);display:flex;align-items:center;gap:10px;padding:0}
+.pkg-list li .dot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+
+/*! ===== ICON GRID ===== */
+.icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:10px}
+.icon-item{
+  background:var(--glass);border:1px solid var(--glass-border);border-radius:14px;
+  padding:14px 8px;text-align:center;font-size:11px;font-weight:500;
+  transition:all .4s cubic-bezier(.22,1,.36,1);opacity:0;transform:scale(.5) rotate(-5deg);
+}
+.icon-item.lit{opacity:1;transform:scale(1) rotate(0)}
+.icon-item:hover{border-color:rgba(139,92,246,.3);transform:scale(1.05)!important;box-shadow:0 0 20px rgba(139,92,246,.1)}
+.icon-item .ic{font-size:26px;display:block;margin-bottom:6px}
+
+/*! ===== EMPLOYEE GRID ===== */
+.emp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(125px,1fr));gap:8px}
+.emp-item{
+  padding:12px 8px;border-radius:12px;font-size:11px;font-weight:600;text-align:center;
+  opacity:0;transform:translateY(12px) scale(.9);transition:all .35s cubic-bezier(.22,1,.36,1);
+  position:relative;overflow:hidden;
+}
+.emp-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:2px 2px 0 0}
+.emp-item.lit{opacity:1;transform:translateY(0) scale(1)}
+.emp-item .cat-label{font-size:8px;text-transform:uppercase;letter-spacing:1.5px;margin-top:4px;font-weight:500}
+/* Category colors */
+.emp-research{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.12)}.emp-research::before{background:var(--purple)}.emp-research .cat-label{color:var(--purple)}
+.emp-product{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.1)}.emp-product::before{background:var(--amber)}.emp-product .cat-label{color:var(--amber)}
+.emp-content{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.1)}.emp-content::before{background:var(--blue)}.emp-content .cat-label{color:var(--blue)}
+.emp-funnel{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.1)}.emp-funnel::before{background:var(--green)}.emp-funnel .cat-label{color:var(--green)}
+.emp-sales{background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.1)}.emp-sales::before{background:var(--red)}.emp-sales .cat-label{color:var(--red)}
+.emp-auto{background:rgba(6,182,212,.06);border:1px solid rgba(6,182,212,.1)}.emp-auto::before{background:var(--cyan)}.emp-auto .cat-label{color:var(--cyan)}
+
+/*! ===== EXPLOSION ===== */
+.explosion-hub{
+  width:110px;height:110px;border-radius:50%;
+  background:linear-gradient(135deg,var(--purple),var(--blue));
+  display:flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:800;margin:0 auto 28px;
+  box-shadow:0 0 60px rgba(139,92,246,.25),0 0 120px rgba(139,92,246,.1);
+  position:relative;
+}
+.explosion-hub::after{content:'';position:absolute;inset:-4px;border-radius:50%;
+  border:1px solid rgba(139,92,246,.2);animation:breathe 3s ease infinite}
+.explosion-items{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.explosion-chip{
+  padding:8px 16px;border-radius:10px;font-size:12px;font-weight:600;
+  background:var(--glass);border:1px solid var(--glass-border);
+  opacity:0;transform:scale(0) rotate(-10deg);transition:all .4s cubic-bezier(.34,1.56,.64,1);
+}
+.explosion-chip.lit{opacity:1;transform:scale(1) rotate(0)}
+.explosion-chip:hover{border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.08)}
+
+/*! ===== CHAOS LOGOS ===== */
+.chaos-field{position:relative;width:100%;height:320px}
+.chaos-item{
+  position:absolute;font-size:13px;font-weight:600;padding:10px 18px;border-radius:10px;
+  background:var(--glass);border:1px solid var(--glass-border);white-space:nowrap;
+  animation:orbFloat 6s ease-in-out infinite;
+}
+.chaos-item:nth-child(2n){animation-duration:7s;animation-delay:-2s}
+.chaos-item:nth-child(3n){animation-duration:5s;animation-delay:-4s}
+.chaos-item:nth-child(4n){animation-duration:8s;animation-delay:-1s}
+
+/*! ===== STACK ROW ===== */
+.stack-row{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.stack-chip{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:18px 22px;border-radius:16px;background:var(--glass);border:1px solid var(--glass-border);
+  font-size:13px;font-weight:600;min-width:110px;backdrop-filter:blur(12px);transition:all .3s;
+}
+.stack-chip:hover{border-color:rgba(139,92,246,.3);transform:translateY(-4px)}
+.stack-chip .ic{font-size:30px}
+
+/*! ===== GUARANTEE ===== */
+.guarantee-ring{
+  width:180px;height:180px;border-radius:50%;position:relative;margin:0 auto 28px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.guarantee-ring::before{content:'';position:absolute;inset:0;border-radius:50%;
+  border:2px solid var(--green);box-shadow:0 0 40px rgba(34,197,94,.15),inset 0 0 40px rgba(34,197,94,.05)}
+.guarantee-ring::after{content:'';position:absolute;inset:-6px;border-radius:50%;
+  border:1px solid rgba(34,197,94,.1);animation:breathe 3s ease infinite}
+
+/*! ===== CTA ===== */
+.cta-btn{
+  display:inline-block;padding:22px 56px;border-radius:18px;text-decoration:none;
+  background:linear-gradient(135deg,var(--purple),var(--blue));
+  font-size:clamp(1.3rem,3vw,2rem);font-weight:800;font-family:'Manrope',sans-serif;
+  color:#fff;letter-spacing:1px;position:relative;overflow:hidden;
+  box-shadow:0 0 40px rgba(139,92,246,.2),0 0 80px rgba(139,92,246,.1);
+  transition:transform .3s,box-shadow .3s;animation:pulseGlow 2.5s ease-in-out infinite;
+}
+.cta-btn:hover{transform:scale(1.04);box-shadow:0 0 60px rgba(139,92,246,.3),0 0 120px rgba(139,92,246,.15)}
+.cta-btn::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(circle,rgba(255,255,255,.1) 0%,transparent 60%);
+  animation:float 4s ease-in-out infinite}
+
+/*! ===== PAY ROW ===== */
+.pay-row{display:flex;justify-content:center;gap:16px;flex-wrap:wrap}
+.pay-chip{
+  padding:14px 24px;border-radius:14px;background:var(--glass);border:1px solid var(--glass-border);
+  font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px;backdrop-filter:blur(12px);
+}
+
+/*! ===== NICHE BADGES ===== */
+.niche-wrap{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:24px}
+.niche-pill{padding:8px 20px;border-radius:100px;font-size:13px;font-weight:500;
+  background:var(--glass);border:1px solid var(--glass-border);transition:all .3s}
+.niche-pill:hover{border-color:rgba(139,92,246,.3);background:rgba(139,92,246,.06)}
+
+/*! ===== DIVIDERS ===== */
+.line-glow{height:1px;background:linear-gradient(90deg,transparent,var(--purple),transparent);margin:28px 0}
+.dot-divider{width:6px;height:6px;border-radius:50%;background:var(--purple);margin:24px auto;opacity:.4}
+
+/*! ===== RESPONSIVE ===== */
+@media(max-width:768px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr 1fr}
+  .slide{padding:40px 20px}
+  .card{padding:20px}
+  .pipeline{gap:4px}
+  .pipe-step{padding:10px 12px;font-size:11px}
+  .pkg{padding:28px 20px}
+  .quote-wrap{padding:36px 28px}
+  .emp-grid{grid-template-columns:repeat(auto-fill,minmax(100px,1fr))}
+}
+@media(max-width:480px){
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .mega{letter-spacing:-1px}
+  .stack-row{gap:8px}
+  .stack-chip{min-width:80px;padding:14px}
+  .chaos-field{height:240px}
+}
+</style>
+</head>
+<body>
+
+<div id="progress-wrap"><div id="progress"></div></div>
+<div id="counter">1 / 53</div>
+<div class="hint" id="hint"><span>&#9660;</span> scroll / arrows / click</div>
+<canvas id="particles"></canvas>
+
+<!-- ================================================================== -->
+<!-- S1: TITLE — Cinematic Logo Reveal -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="1">
+  <div class="glow glow-purple glow-lg" style="top:-300px;right:-200px;animation:breathe 5s ease infinite"></div>
+  <div class="glow glow-blue glow-md" style="bottom:-250px;left:-150px;animation:breathe 6s ease infinite 1s"></div>
+  <div class="glow glow-cyan glow-sm" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease infinite 2s"></div>
+  <div class="slide-inner">
+    <div class="anim fadeDown d1 tag tag-purple" style="margin-bottom:28px">&#9733; ВТОРОЙ ПОТОК &bull; СТАРТ 5 АПРЕЛЯ</div>
+    <h1 class="anim scaleInBig d3 mega" style="margin-bottom:12px">AI-<span class="gradient-purple">МАРКЕТОЛОГ</span></h1>
+    <div class="anim fadeIn d6" style="width:80px;height:3px;background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan));border-radius:2px;margin:20px auto"></div>
+    <p class="anim blurIn d7 medium" style="color:var(--muted);max-width:580px;margin:0 auto">Система из <strong style="color:var(--text)">27 AI-сотрудников</strong> для маркетинга,<br>продаж и автоматизации вашего бизнеса</p>
+    <p class="anim fadeUp d10 xs" style="margin-top:28px;letter-spacing:4px;text-transform:uppercase">ВЛАД ЯСКО &bull; 2026</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S2: $20/мес — Counter Animation -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="2">
+  <div class="glow glow-green glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d1 tag tag-green" style="margin-bottom:36px">ОДИН ЧЕЛОВЕК &bull; ОДИН МЕСЯЦ</div>
+    <div class="anim scaleInBig d2 mega gradient-green" style="margin-bottom:8px">$<span class="counter-num" data-target="20" data-duration="1200">0</span><span style="font-size:.5em;opacity:.6">/мес</span></div>
+    <p class="anim fadeUp d4 big" style="color:var(--muted);margin-bottom:44px">30 нейронок работают на тебя</p>
+    <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap">
+      <div class="anim slideUp d5 card card-glow-purple" style="padding:28px 36px;text-align:center;min-width:160px">
+        <div style="font-size:3.2rem;font-weight:800;line-height:1" class="gradient-purple"><span class="counter-num" data-target="12">0</span></div>
+        <div class="small" style="margin-top:6px">сотрудников<br>заменено</div>
+      </div>
+      <div class="anim slideUp d7 card card-glow-blue" style="padding:28px 36px;text-align:center;min-width:160px">
+        <div style="font-size:3.2rem;font-weight:800;line-height:1" class="gradient-blue">x<span class="counter-num" data-target="10">0</span></div>
+        <div class="small" style="margin-top:6px">рост<br>продуктивности</div>
+      </div>
+      <div class="anim slideUp d9 card card-glow-green" style="padding:28px 36px;text-align:center;min-width:160px">
+        <div style="font-size:3.2rem;font-weight:800;line-height:1" class="gradient-green">x<span class="counter-num" data-target="100">0</span></div>
+        <div class="small" style="margin-top:6px">дешевле<br>подрядчиков</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S3: 7 AI-навыков -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="3">
+  <div class="glow glow-purple glow-md" style="top:-100px;left:15%;animation:breathe 6s ease infinite"></div>
+  <div class="glow glow-blue glow-sm" style="bottom:-100px;right:15%;animation:breathe 5s ease infinite 2s"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d1 tag tag-purple" style="margin-bottom:24px">ПРОГРАММА ОБУЧЕНИЯ</div>
+    <h2 class="anim fadeUp d2 huge" style="margin-bottom:36px"><span class="gradient-purple">7</span> AI-навыков <span style="color:var(--muted)">2026</span></h2>
+    <div style="display:flex;flex-direction:column;gap:10px;max-width:560px;margin:0 auto;text-align:left">
+      <div class="anim slideLeft d2 card" style="padding:14px 22px;display:flex;align-items:center;gap:14px">
+        <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">1</div>
+        <span style="font-weight:600;font-size:15px">Deep Research</span><span class="small" style="margin-left:auto">Стратегия</span>
+      </div>
+      <div class="anim slideLeft d3 card" style="padding:14px 22px;display:flex;align-items:center;gap:14px">
+        <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--amber),#ea580c);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">2</div>
+        <span style="font-weight:600;font-size:15px">Упаковка продукта</span><span class="small" style="margin-left:auto">Оффер</span>
+      </div>
+      <div class="anim slideLeft d4 card" style="padding:14px 22px;display:flex;align-items:center;gap:14px">
+        <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">3</div>
+        <span style="font-weight:600;font-size:15px">Вайб-кодинг</span><span class="small" style="margin-left:auto">Сайты</span>
+      </div>
+      <div class="anim slideLeft d5 card" style="padding:14px 22px;display:flex;align-items:center;gap:14px">
+        <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--green),#059669);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">4</div>
+        <span style="font-weight:600;font-size:15px">Контент-завод</span><span class="small" style="margin-left:auto">16 форматов</span>
+      </div>
+      <div class="anim slideLeft d6 card" style="padding:14px 22px;display:flex;align-items:center;gap:14px">
+        <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,#ec4899,#be185d);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">5</div>
+        <span style="font-weight:600;font-size:15px">Визуальный контент</span><span class="small" style="margin-left:auto">Фото + видео</span>
+      </div>
+      <div class="anim slideLeft d7 card" style="padding:14px 22px;display:flex;align-items:center;gap:14px">
+        <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">6</div>
+        <span style="font-weight:600;font-size:15px">Воронки</span><span class="small" style="margin-left:auto">Автопродажи</span>
+      </div>
+      <div class="anim slideLeft d8 card" style="padding:14px 22px;display:flex;align-items:center;gap:14px">
+        <div style="width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),#0e7490);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">7</div>
+        <span style="font-weight:600;font-size:15px">AI-агенты 24/7</span><span class="small" style="margin-left:auto">Автоматизация</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S4: 27 сотрудников Preview -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="4">
+  <div class="glow glow-purple glow-lg" style="bottom:-300px;right:0;animation:breathe 5s ease infinite"></div>
+  <div class="glow glow-green glow-sm" style="top:-100px;left:10%;animation:breathe 6s ease infinite 1s"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d1 tag tag-amber" style="margin-bottom:24px">ГЛАВНЫЙ АКТИВ</div>
+    <h2 class="anim scaleIn d2 huge" style="margin-bottom:12px"><span class="gradient-multi">27</span> готовых AI-сотрудников</h2>
+    <p class="anim fadeUp d3 medium" style="color:var(--muted);margin-bottom:32px">Копируешь за 5 минут. Работают как у меня.</p>
+    <div class="icon-grid anim-grid" style="max-width:750px;margin:0 auto">
+      <div class="icon-item"><span class="ic">🔬</span>Deep Research</div>
+      <div class="icon-item"><span class="ic">🧬</span>ДНК Клиента</div>
+      <div class="icon-item"><span class="ic">🎯</span>Оффер</div>
+      <div class="icon-item"><span class="ic">💻</span>Вайб-код</div>
+      <div class="icon-item"><span class="ic">🎬</span>Reels</div>
+      <div class="icon-item"><span class="ic">📱</span>Stories</div>
+      <div class="icon-item"><span class="ic">🧵</span>Threads</div>
+      <div class="icon-item"><span class="ic">📊</span>Карусели</div>
+      <div class="icon-item"><span class="ic">🎨</span>Креативы</div>
+      <div class="icon-item"><span class="ic">🗣️</span>ToV</div>
+      <div class="icon-item"><span class="ic">🔄</span>Воронки</div>
+      <div class="icon-item"><span class="ic">🤖</span>AI-агент</div>
+      <div class="icon-item"><span class="ic">📈</span>Аналитика</div>
+      <div class="icon-item"><span class="ic">💰</span>Продажи</div>
+      <div class="icon-item"><span class="ic">📝</span>Контент</div>
+      <div class="icon-item"><span class="ic">⚡</span>Автомат</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S5: 30 каналов — Chaos -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="5">
+  <div class="glow glow-amber glow-lg" style="top:40%;left:20%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <h2 class="anim glitchIn d1 huge" style="margin-bottom:36px"><span class="gradient-amber">30 каналов</span> про AI</h2>
+    <div class="chaos-field anim fadeIn d2">
+      <div class="chaos-item" style="top:5%;left:2%">ChatGPT</div>
+      <div class="chaos-item" style="top:2%;left:30%">Курсы AI</div>
+      <div class="chaos-item" style="top:10%;left:60%">Telegram</div>
+      <div class="chaos-item" style="top:5%;right:3%">YouTube</div>
+      <div class="chaos-item" style="top:35%;left:8%">Промпты</div>
+      <div class="chaos-item" style="top:40%;left:38%">Midjourney</div>
+      <div class="chaos-item" style="top:33%;right:8%">LinkedIn</div>
+      <div class="chaos-item" style="top:60%;left:12%">Claude</div>
+      <div class="chaos-item" style="top:65%;left:45%">Gemini</div>
+      <div class="chaos-item" style="top:58%;right:5%">Notion AI</div>
+      <div class="chaos-item" style="top:20%;left:22%">GPT Store</div>
+      <div class="chaos-item" style="top:50%;left:0%">Perplexity</div>
+      <div class="chaos-item" style="top:80%;left:30%">Sora</div>
+      <div class="chaos-item" style="top:75%;right:15%">Copilot</div>
+    </div>
+    <p class="anim fadeUp d5 medium" style="color:var(--muted);margin-top:16px">Каша в голове. Без системы.</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S6: $0 заработано -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="6">
+  <div class="glow glow-red glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease infinite"></div>
+  <div class="slide-inner">
+    <h2 class="anim scaleInBig d1 mega" style="margin-bottom:12px"><span class="gradient-red">$0</span></h2>
+    <p class="anim fadeUp d3 big" style="margin-bottom:12px">заработано на AI</p>
+    <div class="anim fadeIn d4" style="width:80px;height:2px;background:linear-gradient(90deg,var(--red),transparent);margin:0 auto"></div>
+    <p class="anim fadeUp d5 medium" style="color:var(--muted);margin-top:20px;max-width:480px;margin-left:auto;margin-right:auto">Курсы за $300. Промпты. Подписки.<br>Все уже внедрили. А ты — нет.</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S7: Transition — "Я нашёл систему" -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="7">
+  <div class="glow glow-purple glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease infinite"></div>
+  <div class="slide-inner">
+    <p class="anim fadeUp d1 xs" style="letter-spacing:5px;text-transform:uppercase;margin-bottom:28px">А ПОТОМ</p>
+    <h2 class="anim blurIn d3 huge shimmer-text">Я нашёл систему</h2>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S8: Skill 1 Title — Deep Research -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="8">
+  <div class="glow glow-purple glow-md" style="top:-100px;right:10%;animation:breathe 5s ease infinite"></div>
+  <div class="glow glow-blue glow-sm" style="bottom:-100px;left:20%;animation:breathe 6s ease infinite 2s"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d1 skill-badge"><span>1</span></div>
+    <h2 class="anim fadeUp d2 huge"><span class="gradient-purple">Deep Research</span></h2>
+    <p class="anim fadeUp d4 big" style="color:var(--muted);margin-top:12px">Полная картина рынка за <span style="color:var(--text)">1 день</span></p>
+    <p class="anim fadeUp d5 small" style="margin-top:8px">Вместо 2-3 недель работы маркетолога</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S9: Deep Research Pipeline -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="9">
+  <div class="glow glow-blue glow-md" style="bottom:-100px;left:15%;animation:breathe 6s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-purple" style="margin-bottom:32px">АВТОРСКИЙ МЕТОД &bull; 6 ШАГОВ</div>
+    <div class="pipeline anim-pipeline" data-steps="6">
+      <div class="pipe-step">ДНК Бизнеса</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">Метапромтинг</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">Мультивселенная</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">NotebookLM</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">Допрос</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">Формула</div>
+    </div>
+    <p class="anim fadeUp d8 xs" style="margin-top:32px;letter-spacing:2px">deep-research-guide.vercel.app</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S10: Neural Network Stack -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="10">
+  <div class="glow glow-cyan glow-md" style="top:30%;right:-100px;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-blue" style="margin-bottom:32px">СТЕК НЕЙРОНОК</div>
+    <div class="stack-row">
+      <div class="anim scaleIn d1 stack-chip"><span class="ic">🔍</span>Perplexity</div>
+      <div class="anim scaleIn d3 stack-chip"><span class="ic">⚡</span>Parallel AI</div>
+      <div class="anim scaleIn d5 stack-chip"><span class="ic">🧠</span>Claude</div>
+      <div class="anim scaleIn d7 stack-chip"><span class="ic">💎</span>Gemini</div>
+      <div class="anim scaleIn d9 stack-chip"><span class="ic">🤖</span>ChatGPT</div>
+    </div>
+    <p class="anim fadeUp d11 medium" style="color:var(--muted);margin-top:32px">3-5 нейронок параллельно = <strong style="color:var(--text)">мультивселенная</strong></p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S11: Deep Research Result -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="11">
+  <div class="glow glow-green glow-md" style="bottom:-150px;left:25%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-green" style="margin-bottom:28px">РЕЗУЛЬТАТ ЗА 1 ДЕНЬ</div>
+    <div style="max-width:520px;margin:0 auto;display:flex;flex-direction:column;gap:12px;text-align:left">
+      <div class="anim slideLeft d2 card card-glow-green" style="padding:18px 24px;display:flex;align-items:center;gap:14px">
+        <span style="color:var(--green);font-size:20px;font-weight:800">&#10003;</span>
+        <span style="font-weight:600">Маркетинг-стратегия</span>
+      </div>
+      <div class="anim slideLeft d3 card card-glow-green" style="padding:18px 24px;display:flex;align-items:center;gap:14px">
+        <span style="color:var(--green);font-size:20px;font-weight:800">&#10003;</span>
+        <span style="font-weight:600">GAP-анализ конкурентов</span>
+      </div>
+      <div class="anim slideLeft d4 card card-glow-green" style="padding:18px 24px;display:flex;align-items:center;gap:14px">
+        <span style="color:var(--green);font-size:20px;font-weight:800">&#10003;</span>
+        <span style="font-weight:600">Запросы аудитории</span>
+      </div>
+      <div class="anim slideLeft d5 card card-glow-green" style="padding:18px 24px;display:flex;align-items:center;gap:14px">
+        <span style="color:var(--green);font-size:20px;font-weight:800">&#10003;</span>
+        <span style="font-weight:600">Ценообразование + позиционирование</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S12: Skill 2 Title — Упаковка -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="12">
+  <div class="glow glow-amber glow-md" style="top:-100px;left:25%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d1 skill-badge"><span>2</span></div>
+    <h2 class="anim fadeUp d2 huge"><span class="gradient-amber">Упаковка</span> продукта</h2>
+    <p class="anim fadeUp d4 big" style="color:var(--muted);margin-top:12px">Оффер, который продаёт сам</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S13: 3 Tools -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="13">
+  <div class="glow glow-blue glow-md" style="bottom:-100px;right:15%;animation:breathe 6s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="grid-3" style="max-width:900px;margin:0 auto">
+      <div class="anim rotateIn d1 card card-glow-purple" style="text-align:center">
+        <div style="font-size:44px;margin-bottom:14px">🧬</div>
+        <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:10px">ДНК Клиента</h3>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span class="tag tag-glass" style="font-size:9px;padding:3px 10px">Боли</span>
+          <span class="tag tag-glass" style="font-size:9px;padding:3px 10px">Страхи</span>
+          <span class="tag tag-glass" style="font-size:9px;padding:3px 10px">Триггеры</span>
+          <span class="tag tag-glass" style="font-size:9px;padding:3px 10px">Барьеры</span>
+          <span class="tag tag-glass" style="font-size:9px;padding:3px 10px">Мотивация</span>
+        </div>
+      </div>
+      <div class="anim scaleInBig d3 card card-glow-blue" style="text-align:center">
+        <div style="font-size:44px;margin-bottom:14px">📐</div>
+        <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:10px">Лестница Ханта</h3>
+        <div style="display:flex;flex-direction:column;gap:2px">
+          <div style="font-size:11px;padding:4px 8px;background:rgba(59,130,246,.1);border-radius:6px;color:var(--blue)">Уровень 6 &bull; Покупка</div>
+          <div style="font-size:10px;padding:3px 8px;color:var(--muted)">Уровень 5</div>
+          <div style="font-size:10px;padding:3px 8px;color:var(--muted)">Уровень 4</div>
+          <div style="font-size:10px;padding:3px 8px;color:var(--muted)">Уровень 3</div>
+          <div style="font-size:10px;padding:3px 8px;color:var(--muted)">Уровень 2</div>
+          <div style="font-size:10px;padding:3px 8px;color:var(--muted)">Уровень 1 &bull; Незнание</div>
+        </div>
+      </div>
+      <div class="anim rotateIn d5 card card-glow-green" style="text-align:center">
+        <div style="font-size:44px;margin-bottom:14px">💰</div>
+        <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:10px">Оффер Хормози</h3>
+        <p class="small" style="margin-bottom:8px">$100M Offers</p>
+        <div style="font-size:28px;font-weight:800;color:var(--green)">x10</div>
+        <p class="xs">ценность от цены</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S14: Упаковка Result -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="14">
+  <div class="glow glow-green glow-md" style="top:50%;left:-100px;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-green" style="margin-bottom:24px">РЕЗУЛЬТАТ</div>
+    <h2 class="anim scaleIn d2 huge" style="margin-bottom:8px">Готовый оффер</h2>
+    <p class="anim blurIn d3 big gradient-green">за 1 день</p>
+    <p class="anim fadeUp d5 small" style="margin-top:16px">50 000 символов за 3 минуты</p>
+    <p class="anim fadeUp d6 small">Маркетолог тратит неделю</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S15: Skill 3 Title — Вайб-кодинг -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="15">
+  <div class="glow glow-blue glow-lg" style="top:-100px;right:10%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d1 skill-badge"><span>3</span></div>
+    <h2 class="anim fadeUp d2 huge">Сайт голосом</h2>
+    <p class="anim blurIn d4 big gradient-blue" style="margin-top:8px">за 2 часа</p>
+    <p class="anim fadeUp d5 medium" style="color:var(--muted);margin-top:12px">Без дизайнера. Без верстальщика. Без кода.</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S16: Vibe-coding Pipeline -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="16">
+  <div class="glow glow-purple glow-md" style="bottom:-100px;left:10%;animation:breathe 6s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-blue" style="margin-bottom:32px">7 ШАГОВ ВАЙБ-КОДИНГА</div>
+    <div class="pipeline anim-pipeline" data-steps="7">
+      <div class="pipe-step">Настройка</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">Интерактив</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">Дизайн</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">Фото</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">Анимации</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">Ссылки</div><div class="pipe-arrow">&rarr;</div>
+      <div class="pipe-step">Деплой</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S17: Stats — 6 лендингов -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="17">
+  <div class="glow glow-green glow-md" style="top:30%;right:-100px;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="grid-2" style="max-width:640px;margin:0 auto">
+      <div class="anim scaleInBig d1 card" style="text-align:center;padding:40px 28px">
+        <div style="font-size:clamp(3rem,6vw,4.5rem);font-weight:800;line-height:1" class="gradient-purple"><span class="counter-num" data-target="6">0</span></div>
+        <p style="font-weight:700;margin-top:10px;font-size:15px">лендингов</p>
+        <p class="small">за 1.5 часа</p>
+      </div>
+      <div class="anim scaleInBig d3 card" style="text-align:center;padding:40px 28px">
+        <div style="font-size:clamp(3rem,6vw,4.5rem);font-weight:800;line-height:1" class="gradient-green">$<span class="counter-num" data-target="3000">0</span></div>
+        <p style="font-weight:700;margin-top:10px;font-size:15px">экономии</p>
+        <p class="small">вместо дизайнеров</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S18: Quote — Александра -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="18">
+  <div class="glow glow-purple glow-md" style="bottom:-100px;right:20%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d2 quote-wrap">
+      <p class="quote-text">Прям <span class="gradient-blue">разработчиком</span> себя чувствую</p>
+      <div class="quote-meta">
+        <div class="quote-avatar" style="background:rgba(59,130,246,.1)">А</div>
+        <div class="quote-info"><div class="quote-name" style="color:var(--blue)">Александра</div><div class="quote-role">Ученица первого потока</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S19: Skill 4 Title — Контент-завод -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="19">
+  <div class="glow glow-amber glow-md" style="top:-100px;left:20%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d1 skill-badge"><span>4</span></div>
+    <h2 class="anim fadeUp d2 huge"><span class="gradient-multi">Контент-завод</span></h2>
+    <p class="anim fadeUp d4 big" style="color:var(--muted);margin-top:12px"><span style="color:var(--amber);font-weight:800">16</span> форматов из одной идеи</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S20: Explosion — 16 formats -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="20">
+  <div class="glow glow-purple glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleInBig d1 explosion-hub">1</div>
+    <div class="explosion-items anim-explosion" style="max-width:750px;margin:0 auto">
+      <div class="explosion-chip">Reels</div>
+      <div class="explosion-chip">Viral Reels</div>
+      <div class="explosion-chip">Stories</div>
+      <div class="explosion-chip">Карусели</div>
+      <div class="explosion-chip">Threads</div>
+      <div class="explosion-chip">Shorts</div>
+      <div class="explosion-chip">TikTok</div>
+      <div class="explosion-chip">Telegram</div>
+      <div class="explosion-chip">LinkedIn</div>
+      <div class="explosion-chip">Креативы</div>
+      <div class="explosion-chip">Прогревы</div>
+      <div class="explosion-chip">Email</div>
+      <div class="explosion-chip">Лонгрид</div>
+      <div class="explosion-chip">Статья</div>
+      <div class="explosion-chip">VSL</div>
+      <div class="explosion-chip">Подкаст</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S21: 9 content employees -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="21">
+  <div class="glow glow-blue glow-md" style="bottom:-100px;left:25%;animation:breathe 6s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-purple" style="margin-bottom:28px">КОНТЕНТ-КОМАНДА</div>
+    <h2 class="anim fadeUp d1 big" style="margin-bottom:24px"><span class="text-purple">9</span> AI-сотрудников для контента</h2>
+    <div class="grid-3" style="max-width:660px;margin:0 auto">
+      <div class="anim scaleIn d1 card" style="text-align:center;padding:16px"><span style="font-size:22px">🎬</span><div style="font-size:12px;font-weight:600;margin-top:4px">Reels</div></div>
+      <div class="anim scaleIn d2 card" style="text-align:center;padding:16px"><span style="font-size:22px">🔥</span><div style="font-size:12px;font-weight:600;margin-top:4px">Viral Reels</div></div>
+      <div class="anim scaleIn d3 card" style="text-align:center;padding:16px"><span style="font-size:22px">📱</span><div style="font-size:12px;font-weight:600;margin-top:4px">Stories</div></div>
+      <div class="anim scaleIn d4 card" style="text-align:center;padding:16px"><span style="font-size:22px">📊</span><div style="font-size:12px;font-weight:600;margin-top:4px">Карусели</div></div>
+      <div class="anim scaleIn d5 card" style="text-align:center;padding:16px"><span style="font-size:22px">🧵</span><div style="font-size:12px;font-weight:600;margin-top:4px">Threads</div></div>
+      <div class="anim scaleIn d6 card" style="text-align:center;padding:16px"><span style="font-size:22px">🎨</span><div style="font-size:12px;font-weight:600;margin-top:4px">Креативы</div></div>
+      <div class="anim scaleIn d7 card" style="text-align:center;padding:16px"><span style="font-size:22px">🗣️</span><div style="font-size:12px;font-weight:600;margin-top:4px">Tone of Voice</div></div>
+      <div class="anim scaleIn d8 card" style="text-align:center;padding:16px"><span style="font-size:22px">⚙️</span><div style="font-size:12px;font-weight:600;margin-top:4px">Content System</div></div>
+      <div class="anim scaleIn d9 card" style="text-align:center;padding:16px"><span style="font-size:22px">🫂</span><div style="font-size:12px;font-weight:600;margin-top:4px">Очеловечивание</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S22: Content result -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="22">
+  <div class="glow glow-green glow-md" style="top:-100px;right:15%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-green" style="margin-bottom:24px">РЕЗУЛЬТАТ</div>
+    <h2 class="anim scaleIn d2 huge">Контент-план на месяц</h2>
+    <p class="anim blurIn d3 big gradient-green" style="margin-top:10px">за 30 минут</p>
+    <p class="anim fadeUp d5 small" style="margin-top:16px">Тексты звучат как ТЫ, не как робот</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S23: Skill 5 Title — Визуал -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="23">
+  <div class="glow glow-purple glow-md" style="top:50%;left:-100px;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d1 skill-badge"><span>5</span></div>
+    <h2 class="anim fadeUp d2 huge"><span class="gradient-purple">Визуальный</span> контент</h2>
+    <p class="anim fadeUp d4 big" style="color:var(--muted);margin-top:12px">AI-фото, видео, аватары, озвучка</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S24: Visual Tool Stack -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="24">
+  <div class="glow glow-blue glow-md" style="bottom:-100px;right:10%;animation:breathe 6s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="stack-row">
+      <div class="anim slideLeft d1 stack-chip"><span class="ic">🎨</span><strong>Nano Banana Pro</strong><span class="xs">AI-фото</span></div>
+      <div class="anim slideUp d3 stack-chip"><span class="ic">🤖</span><strong>Grok</strong><span class="xs">Генерация</span></div>
+      <div class="anim slideUp d5 stack-chip"><span class="ic">🎙️</span><strong>11Labs</strong><span class="xs">Клон голоса</span></div>
+      <div class="anim slideRight d7 stack-chip"><span class="ic">🎬</span><strong>Kling</strong><span class="xs">AI-видео</span></div>
+    </div>
+    <div class="anim fadeIn d9 line-glow"></div>
+    <p class="anim fadeUp d10 medium" style="text-align:center">Фотосессия за <strong style="color:var(--text)">30 минут</strong>. Без фотографа.</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S25: VSL speed -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="25">
+  <div class="glow glow-amber glow-md" style="top:30%;left:25%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-amber" style="margin-bottom:24px">СКОРОСТЬ</div>
+    <h2 class="anim scaleIn d2 huge">VSL за <span class="gradient-amber">3 часа</span></h2>
+    <p class="anim fadeUp d4 medium" style="color:var(--muted);margin-top:12px">вместо недели у видеографа</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S26: Skill 6 Title — Воронки -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="26">
+  <div class="glow glow-green glow-md" style="top:-100px;right:15%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d1 skill-badge"><span>6</span></div>
+    <h2 class="anim fadeUp d2 huge"><span class="gradient-green">Воронки</span></h2>
+    <p class="anim fadeUp d4 big" style="color:var(--muted);margin-top:12px">и автопродажи</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S27: Funnel Visual -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="27">
+  <div class="glow glow-purple glow-md" style="bottom:-100px;left:25%;animation:breathe 6s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="funnel anim-funnel" style="max-width:480px;margin:0 auto">
+      <div class="funnel-step" style="width:100%;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2)">Лид-магнит</div>
+      <div class="funnel-arrow">&darr;</div>
+      <div class="funnel-step" style="width:85%;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.18)">Квиз</div>
+      <div class="funnel-arrow">&darr;</div>
+      <div class="funnel-step" style="width:70%;background:rgba(6,182,212,.07);border:1px solid rgba(6,182,212,.15)">Лендинг</div>
+      <div class="funnel-arrow">&darr;</div>
+      <div class="funnel-step" style="width:55%;background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.15)">Бот</div>
+      <div class="funnel-arrow">&darr;</div>
+      <div class="funnel-step" style="width:40%;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);font-weight:700;color:var(--green)">&#10003; Оплата</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S28: Case — Свекровь-чекер -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="28">
+  <div class="glow glow-amber glow-md" style="top:30%;right:-100px;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-green" style="margin-bottom:24px">КЕЙС</div>
+    <div class="anim scaleIn d2 quote-wrap" style="border-color:rgba(34,197,94,.2)">
+      <p class="quote-text" style="font-size:clamp(1.1rem,2.2vw,1.6rem)">Квиз-воронка<br><span class="gradient-green" style="font-size:clamp(1.4rem,3vw,2.2rem)">Свекровь-чекер</span></p>
+      <div class="quote-meta" style="margin-top:20px">
+        <div class="quote-avatar" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3)">О</div>
+        <div class="quote-info"><div class="quote-name" style="color:var(--green)">Олеся</div><div class="quote-role">Семейный психолог, Казахстан</div></div>
+      </div>
+      <p class="small" style="margin-top:12px;text-align:center">Собрана за 20 минут на стратсессии</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S29: Skill 7 Title — AI-агенты -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="29">
+  <div class="glow glow-cyan glow-md" style="top:-100px;left:20%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d1 skill-badge"><span>7</span></div>
+    <h2 class="anim fadeUp d2 huge"><span class="gradient-blue">AI-агенты</span></h2>
+    <p class="anim blurIn d4 big" style="color:var(--muted);margin-top:12px">24/7</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S30: Agent Grid -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="30">
+  <div class="glow glow-purple glow-md" style="bottom:-100px;right:15%;animation:breathe 6s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="grid-2" style="max-width:680px;margin:0 auto">
+      <div class="anim slideLeft d1 card card-glow-purple" style="text-align:center;padding:28px">
+        <div style="font-size:36px;margin-bottom:10px">🐾</div>
+        <h3 style="font-weight:700;font-size:1rem">Open Claw</h3>
+        <p class="small" style="margin-top:6px">Персональный AI-помощник</p>
+      </div>
+      <div class="anim slideRight d2 card card-glow-blue" style="text-align:center;padding:28px">
+        <div style="font-size:36px;margin-bottom:10px">💬</div>
+        <h3 style="font-weight:700;font-size:1rem">AI-менеджер</h3>
+        <p class="small" style="margin-top:6px">Автоответы в Telegram</p>
+      </div>
+      <div class="anim slideLeft d4 card card-glow-green" style="text-align:center;padding:28px">
+        <div style="font-size:36px;margin-bottom:10px">📞</div>
+        <h3 style="font-weight:700;font-size:1rem">Агент звонков</h3>
+        <p class="small" style="margin-top:6px">Анализ + рассылка задач</p>
+      </div>
+      <div class="anim slideRight d5 card" style="text-align:center;padding:28px;border-color:rgba(6,182,212,.15);box-shadow:0 4px 40px rgba(6,182,212,.05)">
+        <div style="font-size:36px;margin-bottom:10px">📊</div>
+        <h3 style="font-weight:700;font-size:1rem">Excel-агент</h3>
+        <p class="small" style="margin-top:6px">КП + отчёты автоматом</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S31: "Работают пока ты спишь" -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="31">
+  <div class="glow glow-cyan glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease infinite"></div>
+  <div class="slide-inner">
+    <h2 class="anim blurIn d2 huge shimmer-text">Работают пока ты спишь</h2>
+    <p class="anim fadeUp d5 medium" style="color:var(--muted);margin-top:16px">Под твои задачи. Без команды.</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S32: Social Proof Title -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="32">
+  <div class="glow glow-purple glow-md" style="top:-100px;right:15%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-amber" style="margin-bottom:24px">SOCIAL PROOF</div>
+    <h2 class="anim scaleIn d2 huge">Что говорят <span class="gradient-purple">ученики</span></h2>
+    <p class="anim fadeUp d4 small" style="margin-top:12px">Без редактуры. Из чата обучения.</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S33: Quote — Виктория -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="33">
+  <div class="glow glow-purple glow-md" style="bottom:-100px;left:25%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d2 quote-wrap">
+      <p class="quote-text">Сижу, делаю домашку<br>и <span class="gradient-purple">охереваю</span></p>
+      <div class="quote-meta">
+        <div class="quote-avatar" style="background:rgba(139,92,246,.1)">В</div>
+        <div class="quote-info"><div class="quote-name">Виктория</div><div class="quote-role">HR</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S34: Quote — Татьяна -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="34">
+  <div class="glow glow-blue glow-md" style="top:30%;right:-100px;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d2 quote-wrap" style="border-color:rgba(59,130,246,.2)">
+      <p class="quote-text"><span class="gradient-blue" style="font-size:1.5em;font-weight:800">80%</span> моих запросов<br>это может решить</p>
+      <div class="quote-meta">
+        <div class="quote-avatar" style="background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3)">Т</div>
+        <div class="quote-info"><div class="quote-name" style="color:var(--blue)">Татьяна</div><div class="quote-role">Бизнес-психолог</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S35: Quote — Андрей -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="35">
+  <div class="glow glow-amber glow-md" style="bottom:-100px;right:15%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleIn d2 quote-wrap" style="border-color:rgba(245,158,11,.2);background:linear-gradient(135deg,rgba(245,158,11,.05),rgba(239,68,68,.02))">
+      <p class="quote-text">Нужно быть полным <span class="gradient-amber">долбоебом</span><br>чтобы не заработать на этом</p>
+      <div class="quote-meta">
+        <div class="quote-avatar" style="background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3)">А</div>
+        <div class="quote-info"><div class="quote-name" style="color:var(--amber)">Андрей</div><div class="quote-role">Предприниматель</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S36: Case — Дофаминомика -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="36">
+  <div class="glow glow-green glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-green" style="margin-bottom:24px">КЕЙС УЧЕНИКА</div>
+    <h2 class="anim fadeUp d1 big" style="margin-bottom:16px">Дофаминомика</h2>
+    <div class="anim scaleInBig d2 mega gradient-green" style="margin-bottom:12px"><span class="counter-num" data-target="2288" data-duration="2000">0</span></div>
+    <p class="anim fadeUp d4 big">пользователей</p>
+    <div class="anim fadeUp d5" style="display:flex;justify-content:center;gap:12px;margin-top:28px;flex-wrap:wrap">
+      <span class="tag tag-green">$0 рекламы</span>
+      <span class="tag tag-blue">1 пост</span>
+      <span class="tag tag-purple">2 дня</span>
+    </div>
+    <p class="anim fadeUp d7 small" style="margin-top:16px">Jedi Monkey &bull; СДВГ-блоггер</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S37: Overall Stats -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="37">
+  <div class="glow glow-purple glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div style="display:flex;justify-content:center;gap:48px;flex-wrap:wrap">
+      <div class="anim scaleInBig d1" style="text-align:center">
+        <div style="font-size:clamp(3rem,7vw,5rem);font-weight:800;line-height:1" class="gradient-purple"><span class="counter-num" data-target="60">0</span></div>
+        <p style="font-weight:600;margin-top:6px;font-size:15px">учеников</p>
+      </div>
+      <div class="anim scaleInBig d3" style="text-align:center">
+        <div style="font-size:clamp(3rem,7vw,5rem);font-weight:800;line-height:1" class="gradient-green">12+</div>
+        <p style="font-weight:600;margin-top:6px;font-size:15px">ниш</p>
+      </div>
+      <div class="anim scaleInBig d5" style="text-align:center">
+        <div style="font-size:clamp(3rem,7vw,5rem);font-weight:800;line-height:1" class="gradient-amber">2</div>
+        <p style="font-weight:600;margin-top:6px;font-size:15px">поток</p>
+      </div>
+    </div>
+    <p class="anim fadeUp d7 small" style="margin-top:28px">HR &bull; Психология &bull; Коучинг &bull; SaaS &bull; Строительство &bull; TikTok &bull; E-commerce</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S38: Для кого — 3 cards -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="38">
+  <div class="glow glow-blue glow-md" style="top:-100px;right:15%;animation:breathe 6s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-purple" style="margin-bottom:28px">ДЛЯ КОГО</div>
+    <div class="grid-3" style="max-width:900px;margin:0 auto">
+      <div class="anim slideLeft d1 card card-glow-purple" style="padding:32px 22px;text-align:center">
+        <div style="font-size:44px;margin-bottom:14px">🎯</div>
+        <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:10px">Эксперты</h3>
+        <p class="small">Устал платить команде. Хочешь делать всё сам, но быстро.</p>
+      </div>
+      <div class="anim scaleInBig d3 card card-highlight" style="padding:32px 22px;text-align:center">
+        <div style="font-size:44px;margin-bottom:14px">📈</div>
+        <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:10px">Маркетологи</h3>
+        <p class="small">10 проектов в одиночку. AI-продюсер нового поколения.</p>
+      </div>
+      <div class="anim slideRight d5 card card-glow-blue" style="padding:32px 22px;text-align:center">
+        <div style="font-size:44px;margin-bottom:14px">🚀</div>
+        <h3 style="font-size:1.05rem;font-weight:700;margin-bottom:10px">AI-стартаперы</h3>
+        <p class="small">Микро-сервисы и приложения. С одного поста -- тысячи юзеров.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S39: + Предприниматели + Новаторы -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="39">
+  <div class="glow glow-amber glow-md" style="bottom:-100px;left:20%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="grid-2" style="max-width:560px;margin:0 auto">
+      <div class="anim slideLeft d1 card card-glow-green" style="text-align:center;padding:32px">
+        <div style="font-size:40px;margin-bottom:10px">💼</div>
+        <h3 style="font-weight:700">Предприниматели</h3>
+        <p class="small" style="margin-top:6px">AI во все отделы бизнеса</p>
+      </div>
+      <div class="anim slideRight d3 card" style="text-align:center;padding:32px;border-color:rgba(245,158,11,.15)">
+        <div style="font-size:40px;margin-bottom:10px">💡</div>
+        <h3 style="font-weight:700">Новаторы</h3>
+        <p class="small" style="margin-top:6px">Первые в своей нише</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S40: Работает в любой нише -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="40">
+  <div class="glow glow-green glow-md" style="top:30%;right:10%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <h2 class="anim scaleIn d1 huge" style="margin-bottom:24px">Работает в <span class="gradient-green">любой нише</span></h2>
+    <div class="niche-wrap anim fadeUp d3">
+      <span class="niche-pill">HR</span><span class="niche-pill">Психология</span><span class="niche-pill">Коучинг</span>
+      <span class="niche-pill">SaaS</span><span class="niche-pill">Строительство</span><span class="niche-pill">TikTok</span>
+      <span class="niche-pill">E-commerce</span><span class="niche-pill">Образование</span><span class="niche-pill">Финансы</span>
+      <span class="niche-pill">Консалтинг</span><span class="niche-pill">Красота</span><span class="niche-pill">Здоровье</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S41: "Это не курс — это 27 AI-сотрудников" -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="41">
+  <div class="glow glow-purple glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease infinite"></div>
+  <div class="slide-inner">
+    <p class="anim fadeUp d1 xs" style="letter-spacing:4px;text-transform:uppercase;margin-bottom:20px">ЭТО НЕ КУРС</p>
+    <h2 class="anim scaleInBig d2 huge" style="margin-bottom:12px">Это <span class="gradient-multi">27 AI-сотрудников</span></h2>
+    <p class="anim fadeUp d5 medium" style="color:var(--muted)">которые работают на тебя</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S42: Full 27 Grid with Categories -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="42">
+  <div class="glow glow-blue glow-md" style="bottom:-200px;left:15%;animation:breathe 6s ease infinite"></div>
+  <div class="glow glow-purple glow-md" style="top:-100px;right:10%;animation:breathe 5s ease infinite 2s"></div>
+  <div class="slide-inner">
+    <div class="emp-grid anim-emp" style="max-width:960px;margin:0 auto">
+      <div class="emp-item emp-research"><strong>Deep Research</strong><div class="cat-label">Исследование</div></div>
+      <div class="emp-item emp-research"><strong>ДНК Клиента</strong><div class="cat-label">Исследование</div></div>
+      <div class="emp-item emp-product"><strong>Лестница Ханта</strong><div class="cat-label">Стратегия</div></div>
+      <div class="emp-item emp-product"><strong>Оффер Хормози</strong><div class="cat-label">Продукт</div></div>
+      <div class="emp-item emp-content"><strong>Tone of Voice</strong><div class="cat-label">Контент</div></div>
+      <div class="emp-item emp-content"><strong>Content System</strong><div class="cat-label">Контент</div></div>
+      <div class="emp-item emp-content"><strong>Reels</strong><div class="cat-label">Контент</div></div>
+      <div class="emp-item emp-content"><strong>Viral Reels</strong><div class="cat-label">Контент</div></div>
+      <div class="emp-item emp-content"><strong>Stories</strong><div class="cat-label">Контент</div></div>
+      <div class="emp-item emp-content"><strong>Карусели</strong><div class="cat-label">Контент</div></div>
+      <div class="emp-item emp-content"><strong>Threads</strong><div class="cat-label">Контент</div></div>
+      <div class="emp-item emp-content"><strong>Креативы</strong><div class="cat-label">Контент</div></div>
+      <div class="emp-item emp-content"><strong>Очеловечивание</strong><div class="cat-label">Контент</div></div>
+      <div class="emp-item emp-funnel"><strong>Лид-магнит</strong><div class="cat-label">Воронки</div></div>
+      <div class="emp-item emp-funnel"><strong>Квиз-воронка</strong><div class="cat-label">Воронки</div></div>
+      <div class="emp-item emp-funnel"><strong>Direct Funnel</strong><div class="cat-label">Воронки</div></div>
+      <div class="emp-item emp-funnel"><strong>Прогревы</strong><div class="cat-label">Воронки</div></div>
+      <div class="emp-item emp-funnel"><strong>VSL-сценарий</strong><div class="cat-label">Воронки</div></div>
+      <div class="emp-item emp-funnel"><strong>Бот-цепочка</strong><div class="cat-label">Воронки</div></div>
+      <div class="emp-item emp-sales"><strong>AI-менеджер</strong><div class="cat-label">Продажи</div></div>
+      <div class="emp-item emp-sales"><strong>Cold Email</strong><div class="cat-label">Продажи</div></div>
+      <div class="emp-item emp-auto"><strong>Open Claw</strong><div class="cat-label">Автоматизация</div></div>
+      <div class="emp-item emp-auto"><strong>Агент звонков</strong><div class="cat-label">Автоматизация</div></div>
+      <div class="emp-item emp-auto"><strong>Excel-агент</strong><div class="cat-label">Рутина</div></div>
+      <div class="emp-item emp-auto"><strong>КП-агент</strong><div class="cat-label">Рутина</div></div>
+      <div class="emp-item emp-auto"><strong>Вайб-код</strong><div class="cat-label">Разработка</div></div>
+      <div class="emp-item emp-auto"><strong>SEO-агент</strong><div class="cat-label">Маркетинг</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S43: 200+ hours -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="43">
+  <div class="glow glow-amber glow-md" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div style="display:flex;justify-content:center;gap:28px;flex-wrap:wrap;margin-bottom:28px">
+      <div class="anim scaleIn d1 card" style="text-align:center;padding:32px 40px">
+        <div style="font-size:3.5rem;font-weight:800;line-height:1" class="gradient-purple"><span class="counter-num" data-target="200">0</span>+</div>
+        <p class="small" style="margin-top:8px">часов моей работы</p>
+      </div>
+      <div class="anim scaleIn d3 card" style="text-align:center;padding:32px 40px">
+        <div style="font-size:3.5rem;font-weight:800;line-height:1" class="gradient-green">5</div>
+        <p class="small" style="margin-top:8px">минут на копирование</p>
+      </div>
+    </div>
+    <p class="anim fadeUp d5 medium" style="color:var(--muted)">Планирую продавать отдельно за $2000+</p>
+    <p class="anim fadeUp d6 big gradient-purple" style="margin-top:8px">Сейчас -- бонусом обучения</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S44: Format — 3 columns -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="44">
+  <div class="glow glow-blue glow-md" style="top:-100px;left:25%;animation:breathe 6s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-purple" style="margin-bottom:28px">ФОРМАТ ОБУЧЕНИЯ</div>
+    <div class="grid-3" style="max-width:860px;margin:0 auto">
+      <div class="anim slideLeft d1 card" style="text-align:center;padding:32px 20px">
+        <div style="font-size:40px;margin-bottom:12px">🎥</div>
+        <h3 style="font-weight:700;margin-bottom:8px;font-size:1rem">Записи</h3>
+        <p class="small">8 модулей<br>Смотри когда удобно</p>
+      </div>
+      <div class="anim scaleIn d3 card card-highlight" style="text-align:center;padding:32px 20px">
+        <div style="font-size:40px;margin-bottom:12px">🔴</div>
+        <h3 style="font-weight:700;margin-bottom:8px;font-size:1rem">Live-воркшоп</h3>
+        <p class="small">Каждую неделю<br>На ТВОЁМ проекте</p>
+      </div>
+      <div class="anim slideRight d5 card" style="text-align:center;padding:32px 20px">
+        <div style="font-size:40px;margin-bottom:12px">💬</div>
+        <h3 style="font-weight:700;margin-bottom:8px;font-size:1rem">Чат</h3>
+        <p class="small">71 участник<br>Помощь, команда, запуски</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S45: Duration -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="45">
+  <div class="glow glow-green glow-md" style="bottom:-100px;right:15%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap">
+      <div class="anim scaleIn d1 card" style="text-align:center;padding:28px 40px">
+        <div style="font-size:2.8rem;font-weight:800;line-height:1;color:var(--purple)">2</div>
+        <p class="small" style="margin-top:6px">месяца</p>
+      </div>
+      <div class="anim scaleIn d2 card" style="text-align:center;padding:28px 40px">
+        <div style="font-size:2.8rem;font-weight:800;line-height:1;color:var(--blue)">8</div>
+        <p class="small" style="margin-top:6px">модулей</p>
+      </div>
+      <div class="anim scaleIn d3 card" style="text-align:center;padding:28px 40px">
+        <div style="font-size:2.8rem;font-weight:800;line-height:1;color:var(--green)">4-6</div>
+        <p class="small" style="margin-top:6px">часов/нед</p>
+      </div>
+    </div>
+    <p class="anim fadeUp d5 medium" style="color:var(--muted);margin-top:28px">Старт -- <strong style="color:var(--text)">5 апреля 2026</strong></p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S46: Предпродажа -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="46">
+  <div class="glow glow-amber glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-amber" style="margin-bottom:28px">&#9200; ПРЕДПРОДАЖА</div>
+    <h2 class="anim scaleInBig d2 huge shimmer-text">Цена растёт через 5 дней</h2>
+    <p class="anim fadeUp d5 medium" style="color:var(--muted);margin-top:16px">Лучшие условия -- прямо сейчас</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S47: Packages -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="47">
+  <div class="glow glow-purple glow-lg" style="bottom:-250px;left:15%;animation:breathe 5s ease infinite"></div>
+  <div class="glow glow-blue glow-sm" style="top:-100px;right:10%;animation:breathe 6s ease infinite 2s"></div>
+  <div class="slide-inner">
+    <div class="grid-3" style="max-width:980px;margin:0 auto;align-items:start">
+      <div class="anim slideLeft d1 pkg pkg-std">
+        <div class="pkg-name" style="color:var(--blue)">Самостоятельный</div>
+        <div class="pkg-price gradient-blue">$250</div>
+        <ul class="pkg-list">
+          <li><span class="dot" style="background:var(--blue)"></span>8 модулей в записи</li>
+          <li><span class="dot" style="background:var(--blue)"></span>27 AI-сотрудников</li>
+          <li><span class="dot" style="background:var(--blue)"></span>Записи 1-го потока</li>
+          <li><span class="dot" style="background:var(--blue)"></span>Доступ к материалам</li>
+        </ul>
+      </div>
+      <div class="anim scaleInBig d3 pkg pkg-pop" style="transform-origin:center top">
+        <div class="pkg-badge">70% выбирают</div>
+        <div class="pkg-name" style="color:var(--purple)">Групповой</div>
+        <div class="pkg-price gradient-purple">$500</div>
+        <ul class="pkg-list">
+          <li><span class="dot" style="background:var(--purple)"></span>Всё из Самостоятельного</li>
+          <li><span class="dot" style="background:var(--purple)"></span>Live каждую неделю</li>
+          <li><span class="dot" style="background:var(--purple)"></span>Чат обучения</li>
+          <li><span class="dot" style="background:var(--purple)"></span>Обратная связь от Влада</li>
+          <li><span class="dot" style="background:var(--purple)"></span>Рассрочка от $56/мес</li>
+        </ul>
+      </div>
+      <div class="anim slideRight d5 pkg pkg-prem">
+        <div class="pkg-name" style="color:var(--amber)">Со стратсессией</div>
+        <div class="pkg-price gradient-amber">$800</div>
+        <ul class="pkg-list">
+          <li><span class="dot" style="background:var(--amber)"></span>Всё из Группового</li>
+          <li><span class="dot" style="background:var(--amber)"></span>1 час с Владом лично</li>
+          <li><span class="dot" style="background:var(--amber)"></span>Прогон через 63 нейронки</li>
+          <li><span class="dot" style="background:var(--amber)"></span>Готовый план действий</li>
+          <li><span class="dot" style="background:var(--amber)"></span>Стратсессия стоит $700</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S48: $500 highlight -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="48">
+  <div class="glow glow-purple glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-purple" style="margin-bottom:24px">РЕКОМЕНДАЦИЯ</div>
+    <div class="anim scaleInBig d2 mega gradient-purple" style="margin-bottom:8px">$500</div>
+    <p class="anim fadeUp d4 big" style="margin-bottom:8px">70% выбирают этот пакет</p>
+    <div class="anim fadeIn d5 line-glow"></div>
+    <p class="anim fadeUp d6 medium" style="color:var(--muted)">$56/мес в рассрочку</p>
+    <p class="anim fadeUp d7 small" style="margin-top:8px">Дешевле, чем один пост от фрилансера</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S49: Payment -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="49">
+  <div class="glow glow-green glow-md" style="bottom:-100px;left:25%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim fadeUp d0 tag tag-green" style="margin-bottom:28px">СПОСОБЫ ОПЛАТЫ</div>
+    <h2 class="anim fadeUp d1 big" style="margin-bottom:28px">Удобным способом</h2>
+    <div class="pay-row">
+      <div class="anim scaleIn d2 pay-chip">💳 Mono</div>
+      <div class="anim scaleIn d3 pay-chip">🌐 PayPal</div>
+      <div class="anim scaleIn d4 pay-chip">&#8383; USDT</div>
+      <div class="anim scaleIn d5 pay-chip">💳 Visa / MC</div>
+    </div>
+    <p class="anim fadeUp d7 small" style="margin-top:24px">Рассрочка доступна для всех пакетов</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S50: Гарантия -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="50">
+  <div class="glow glow-green glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 4s ease infinite"></div>
+  <div class="slide-inner">
+    <div class="anim scaleInBig d1 guarantee-ring">
+      <div style="font-size:2.8rem;font-weight:800;line-height:1" class="gradient-green">100%</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">возврат</div>
+    </div>
+    <h2 class="anim fadeUp d3 big" style="margin-bottom:10px">Гарантия без дураков</h2>
+    <p class="anim fadeUp d4 medium" style="color:var(--muted)">14 дней. Напиши -- получишь деньги обратно.</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S51: URL CTA -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="51">
+  <div class="glow glow-purple glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);animation:breathe 3s ease infinite"></div>
+  <div class="slide-inner">
+    <p class="anim fadeUp d1 xs" style="letter-spacing:5px;text-transform:uppercase;margin-bottom:32px">ЗАБРАТЬ МЕСТО</p>
+    <a href="https://aimarketolog.site" target="_blank" class="anim scaleInBig d3 cta-btn">aimarketolog.site</a>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S52: Telegram -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="52">
+  <div class="glow glow-blue glow-md" style="bottom:-100px;right:15%;animation:breathe 5s ease infinite"></div>
+  <div class="slide-inner">
+    <p class="anim fadeUp d0 xs" style="letter-spacing:4px;text-transform:uppercase;margin-bottom:24px">ВОПРОСЫ? ПИШИ</p>
+    <h2 class="anim scaleIn d2 huge"><span class="gradient-blue">@vlad_yasko_ai</span></h2>
+    <p class="anim fadeUp d4 medium" style="color:var(--muted);margin-top:8px">Telegram</p>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- S53: FINAL — "Погнали." -->
+<!-- ================================================================== -->
+<section class="slide" data-slide="53">
+  <div class="glow glow-purple glow-lg" style="top:50%;left:50%;transform:translate(-50%,-50%);opacity:.35;animation:breathe 3s ease infinite"></div>
+  <div class="glow glow-blue glow-md" style="top:30%;left:30%;animation:breathe 5s ease infinite 1s"></div>
+  <div class="glow glow-cyan glow-sm" style="bottom:30%;right:30%;animation:breathe 4s ease infinite 2s"></div>
+  <div class="slide-inner">
+    <h1 class="anim scaleInBig d2 mega shimmer-text" style="font-size:clamp(4rem,14vw,12rem)">Погнали.</h1>
+  </div>
+</section>
+
+<!-- ================================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ================================================================== -->
+<script>
+(function(){
+  'use strict';
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const progress = document.getElementById('progress');
+  const counter = document.getElementById('counter');
+  const hint = document.getElementById('hint');
+  let cur = 0;
+  let busy = false;
+
+  /* --- Particles --- */
+  const cv = document.getElementById('particles');
+  const cx = cv.getContext('2d');
+  let W, H;
+  const pts = [];
+  function resize(){ W = cv.width = innerWidth; H = cv.height = innerHeight; }
+  resize(); addEventListener('resize', resize);
+  for(let i = 0; i < 80; i++){
+    pts.push({
+      x: Math.random()*2000, y: Math.random()*2000,
+      vx: (Math.random()-.5)*.25, vy: (Math.random()-.5)*.25,
+      r: Math.random()*1.2+.3,
+      a: Math.random()*.2+.03,
+      hue: Math.random() > .5 ? 259 : 217 // purple or blue
+    });
+  }
+  function drawP(){
+    cx.clearRect(0,0,W,H);
+    for(const p of pts){
+      p.x += p.vx; p.y += p.vy;
+      if(p.x < 0) p.x = W; if(p.x > W) p.x = 0;
+      if(p.y < 0) p.y = H; if(p.y > H) p.y = 0;
+      cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.283);
+      cx.fillStyle = `hsla(${p.hue},76%,65%,${p.a})`; cx.fill();
+    }
+    // Connect nearby
+    for(let i=0;i<pts.length;i++){
+      for(let j=i+1;j<pts.length;j++){
+        const dx=pts[i].x-pts[j].x, dy=pts[i].y-pts[j].y;
+        const d=dx*dx+dy*dy;
+        if(d<18000){
+          cx.beginPath();cx.moveTo(pts[i].x,pts[i].y);cx.lineTo(pts[j].x,pts[j].y);
+          cx.strokeStyle=`hsla(259,76%,65%,${.02*(1-d/18000)})`;cx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(drawP);
+  }
+  drawP();
+
+  /* --- UI Update --- */
+  function updateUI(){
+    progress.style.width = ((cur+1)/total*100)+'%';
+    counter.textContent = (cur+1)+' / '+total;
+    if(cur > 0) hint.classList.add('hidden');
+  }
+
+  /* --- Animate slide elements --- */
+  function animate(idx){
+    const s = slides[idx];
+    // Basic anims with stagger
+    s.querySelectorAll('.anim').forEach(el => el.classList.add('v'));
+    // Pipeline
+    s.querySelectorAll('.anim-pipeline').forEach(pipe => {
+      const steps = pipe.querySelectorAll('.pipe-step');
+      const arrows = pipe.querySelectorAll('.pipe-arrow');
+      steps.forEach((st,i) => {
+        setTimeout(() => { st.classList.add('lit'); if(arrows[i]) arrows[i].classList.add('lit'); }, 400 + i * 300);
+      });
+    });
+    // Funnel
+    s.querySelectorAll('.anim-funnel').forEach(f => {
+      const steps = f.querySelectorAll('.funnel-step');
+      const arrows = f.querySelectorAll('.funnel-arrow');
+      steps.forEach((st,i) => { setTimeout(() => { st.classList.add('lit'); if(arrows[i]) arrows[i].classList.add('lit'); }, 200 + i * 280); });
+    });
+    // Icon grid
+    s.querySelectorAll('.anim-grid').forEach(g => {
+      g.querySelectorAll('.icon-item').forEach((it,i) => { setTimeout(() => it.classList.add('lit'), 80 + i * 70); });
+    });
+    // Explosion
+    s.querySelectorAll('.anim-explosion').forEach(e => {
+      e.querySelectorAll('.explosion-chip').forEach((it,i) => { setTimeout(() => it.classList.add('lit'), 150 + i * 80); });
+    });
+    // Employee grid
+    s.querySelectorAll('.anim-emp').forEach(g => {
+      g.querySelectorAll('.emp-item').forEach((it,i) => { setTimeout(() => it.classList.add('lit'), 30 + i * 50); });
+    });
+    // Counter animation
+    s.querySelectorAll('.counter-num').forEach(el => {
+      const target = parseInt(el.dataset.target);
+      const dur = parseInt(el.dataset.duration || '1500');
+      if(target === 0){ el.textContent = '0'; return; }
+      let start = performance.now();
+      (function tick(now){
+        const p = Math.min((now - start)/dur, 1);
+        const eased = 1 - Math.pow(1-p, 4); // quartic ease-out
+        el.textContent = Math.round(eased * target).toLocaleString('en-US');
+        if(p < 1) requestAnimationFrame(tick);
+        else { el.textContent = target.toLocaleString('en-US'); el.style.animation = 'counterPop .3s ease'; }
+      })(start);
+    });
+  }
+
+  function resetSlide(idx){
+    const s = slides[idx];
+    s.querySelectorAll('.anim').forEach(el => { el.classList.remove('v'); el.style.animation = ''; });
+    s.querySelectorAll('.pipe-step,.pipe-arrow,.funnel-step,.funnel-arrow,.icon-item,.explosion-chip,.emp-item').forEach(el => el.classList.remove('lit'));
+  }
+
+  function goTo(idx){
+    if(idx < 0 || idx >= total || busy) return;
+    busy = true;
+    if(idx !== cur) resetSlide(cur);
+    cur = idx;
+    slides[cur].scrollIntoView({ behavior: 'smooth' });
+    updateUI();
+    setTimeout(() => { animate(cur); busy = false; }, 350);
+  }
+
+  // Init
+  updateUI();
+  setTimeout(() => animate(0), 200);
+
+  // Keyboard
+  document.addEventListener('keydown', e => {
+    if(e.key === 'ArrowDown' || e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); goTo(cur+1); }
+    else if(e.key === 'ArrowUp' || e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); goTo(cur-1); }
+    else if(e.key === 'Home'){ e.preventDefault(); goTo(0); }
+    else if(e.key === 'End'){ e.preventDefault(); goTo(total-1); }
+  });
+
+  // Wheel with debounce
+  let wt;
+  document.addEventListener('wheel', e => {
+    e.preventDefault();
+    clearTimeout(wt);
+    wt = setTimeout(() => { e.deltaY > 0 ? goTo(cur+1) : goTo(cur-1); }, 60);
+  }, { passive: false });
+
+  // Touch
+  let ty = 0;
+  document.addEventListener('touchstart', e => { ty = e.touches[0].clientY; }, { passive: true });
+  document.addEventListener('touchend', e => {
+    const d = ty - e.changedTouches[0].clientY;
+    if(Math.abs(d) > 40){ d > 0 ? goTo(cur+1) : goTo(cur-1); }
+  }, { passive: true });
+
+  // Click to advance (skip links)
+  document.addEventListener('click', e => {
+    if(e.target.closest('a')) return;
+    if(e.clientX > innerWidth * .5) goTo(cur+1); else goTo(cur-1);
+  });
+
+  // IntersectionObserver as scroll-snap fallback
+  const obs = new IntersectionObserver(entries => {
+    for(const en of entries){
+      if(en.isIntersecting){
+        const idx = [...slides].indexOf(en.target);
+        if(idx !== cur && !busy){ cur = idx; updateUI(); animate(cur); }
+      }
+    }
+  }, { threshold: .55 });
+  slides.forEach(s => obs.observe(s));
+})();
+</script>
+</body>
+</html>
