@@ -6,7 +6,7 @@
     <title>AI-Маркетолог: Сверхчеловек за 2 месяца | Влад Яско</title>
     <meta name="description" content="63 нейронки. 27 цифровых сотрудников. 7 блоков. За 2 месяца собери AI-систему маркетинга — от исследования до продаж. Предпродажа от $250.">
     <meta property="og:title" content="AI-Маркетолог: 63 нейронки. 27 сотрудников. Сверхчеловек.">
-    <meta property="og:description" content="Практический воркшоп от Влада Яско. За 2 месяца собери AI-систему из 27 цифровых сотрудников. Старт 5 апреля.">
+    <meta property="og:description" content="Практический воркшоп от Влада Яско. За 2 месяца собери AI-систему из 27 цифровых сотрудников. Старт 15 апреля.">
     <meta property="og:type" content="website">
     <meta property="og:locale" content="ru_RU">
     <meta name="twitter:card" content="summary_large_image">
@@ -56,6 +56,73 @@
         img { max-width: 100%; display: block; }
         a { color: inherit; text-decoration: none; }
         ul, ol { list-style: none; }
+
+        /* ========== ANIMATED GRADIENT MESH BG ========== */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(139,92,246,0.08), transparent),
+                radial-gradient(ellipse 60% 40% at 80% 20%, rgba(59,130,246,0.06), transparent),
+                radial-gradient(ellipse 50% 60% at 50% 80%, rgba(34,197,94,0.04), transparent);
+            background-size: 200% 200%;
+            animation: meshFlow 20s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        @keyframes meshFlow {
+            0%, 100% { background-position: 0% 50%; }
+            33% { background-position: 100% 0%; }
+            66% { background-position: 50% 100%; }
+        }
+
+        /* ========== PULSING CTA GLOW ========== */
+        @keyframes ctaPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(34,197,94,0.2), 0 0 60px rgba(34,197,94,0.05); }
+            50% { box-shadow: 0 0 30px rgba(34,197,94,0.4), 0 0 80px rgba(34,197,94,0.15); }
+        }
+        .cta-btn:not(.cta-btn-outline) {
+            animation: ctaPulse 3s ease-in-out infinite;
+        }
+
+        /* ========== GRADIENT BORDER CARDS ========== */
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, transparent 40%, rgba(139,92,246,0.3) 70%, rgba(59,130,246,0.2));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+        .card:hover::before { opacity: 1; }
+
+        /* ========== ANIMATED BORDER FOR FEATURED PACKAGE ========== */
+        @keyframes borderGlow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(139,92,246,0.15), 0 0 60px rgba(139,92,246,0.08);
+                border-color: rgba(139,92,246,0.4);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(139,92,246,0.3), 0 0 80px rgba(139,92,246,0.15);
+                border-color: rgba(139,92,246,0.6);
+            }
+        }
+        .package-card.featured {
+            animation: borderGlow 4s ease-in-out infinite;
+        }
+
+        /* ========== COUNTDOWN GLOW ========== */
+        .countdown-num {
+            text-shadow: 0 0 20px rgba(139,92,246,0.4), 0 0 40px rgba(139,92,246,0.15);
+        }
 
         /* ========== SCROLLBAR ========== */
         ::-webkit-scrollbar { width: 8px; }
@@ -208,18 +275,34 @@
         }
         .hero .orb-1 {
             width: 600px; height: 600px;
-            background: rgba(139,92,246,0.15);
+            background: radial-gradient(circle at 40% 40%, rgba(139,92,246,0.2), rgba(99,102,241,0.1) 50%, transparent 70%);
             top: -200px; right: -200px;
+            animation: orbFloat1 18s ease-in-out infinite;
         }
         .hero .orb-2 {
             width: 400px; height: 400px;
-            background: rgba(59,130,246,0.1);
+            background: radial-gradient(circle at 60% 60%, rgba(59,130,246,0.15), rgba(6,182,212,0.05) 50%, transparent 70%);
             bottom: -100px; left: -100px;
+            animation: orbFloat2 22s ease-in-out infinite;
         }
         .hero .orb-3 {
             width: 300px; height: 300px;
-            background: rgba(34,197,94,0.06);
+            background: radial-gradient(circle at 50% 50%, rgba(34,197,94,0.08), rgba(139,92,246,0.04) 50%, transparent 70%);
             top: 40%; left: 50%;
+            animation: orbFloat3 15s ease-in-out infinite;
+        }
+        @keyframes orbFloat1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(40px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+        @keyframes orbFloat2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -40px) scale(1.08); }
+        }
+        @keyframes orbFloat3 {
+            0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            50% { transform: translate(-20px, 15px) scale(1.1) rotate(10deg); }
         }
         .hero-content {
             position: relative;
@@ -1773,7 +1856,7 @@
     <div class="container">
         <div class="hero-content">
             <div class="hero-badge">
-                <span class="badge">&#128293; Второй поток &nbsp;|&nbsp; Старт 5 апреля &nbsp;|&nbsp; Предпродажа &mdash; цена растёт через 5 дней</span>
+                <span class="badge">&#128293; Второй поток &nbsp;|&nbsp; Старт 15 апреля &nbsp;|&nbsp; Предпродажа &mdash; цена растёт через 5 дней</span>
             </div>
             <h1>Обучись нейронкам. x10 к продуктивности.<br><span class="gradient-text">Делегируй 80% рутины.</span><br>Внедри AI-маркетинг.</h1>
             <h2>За 2 месяца освой работу с 30+ нейронками на продвинутом уровне, забери 27 готовых AI-сотрудников и внедри себе систему AI-маркетинга &mdash; от исследования рынка до автоматических продаж. Любая ниша.</h2>
@@ -2728,7 +2811,7 @@
             </div>
         </div>
         <div style="text-align:center;margin-top:24px;" class="reveal reveal-delay-3">
-            <p style="font-size:14px;color:var(--text-muted);">&#128205; <strong style="color:var(--text-primary);">Старт: 5 апреля</strong> &nbsp;|&nbsp; Длительность: 2 месяца &nbsp;|&nbsp; 4-6 часов в неделю</p>
+            <p style="font-size:14px;color:var(--text-muted);">&#128205; <strong style="color:var(--text-primary);">Старт: 15 апреля</strong> &nbsp;|&nbsp; Длительность: 2 месяца &nbsp;|&nbsp; 4-6 часов в неделю</p>
         </div>
     </div>
 </section>
@@ -2860,7 +2943,7 @@
     <div class="container">
         <h2 class="section-title reveal">&#128293; Предпродажа &mdash; <span class="gradient-text">цена растёт через 5 дней</span></h2>
         <div class="packages-value-banner reveal reveal-delay-1">
-            Старт 5 апреля &nbsp;|&nbsp; 2 месяца &nbsp;|&nbsp; 27 цифровых сотрудников в подарок
+            Старт 15 апреля &nbsp;|&nbsp; 2 месяца &nbsp;|&nbsp; 27 цифровых сотрудников в подарок
         </div>
         <div class="packages-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));">
             <!-- Package 1: Куколд -->
@@ -3148,7 +3231,7 @@
             <a href="#packages" class="cta-btn" style="font-size:20px; padding: 20px 48px;">Забрать по цене предпродажи &rarr;</a>
         </div>
         <div class="final-small reveal reveal-delay-3">
-            <span>Старт 5 апреля</span>
+            <span>Старт 15 апреля</span>
             <span>Цена растёт через 5 дней</span>
             <span>Рассрочка от $66/мес</span>
             <span>100% возврат 14 дней</span>
